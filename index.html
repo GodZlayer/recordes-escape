@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quadro de Recordes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Bangers&family=Finger+Paint&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --board-width: 450px;
+        --board-height: 800px;
+        --board-scale: 1;
+        --ink: #fff;
+        --paper: #000;
+        --chalkboard: #151817;
+        --wood: #d2a15a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        overflow: hidden;
+        background: #101010;
+      }
+
+      body {
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        color: var(--ink);
+        font-family: "Bangers", Impact, sans-serif;
+      }
+
+      .fit-shell {
+        width: calc(var(--board-width) * var(--board-scale));
+        height: calc(var(--board-height) * var(--board-scale));
+        position: relative;
+      }
+
+      .record-board {
+        width: var(--board-width);
+        height: var(--board-height);
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: var(--paper);
+        transform: scale(var(--board-scale));
+        transform-origin: 0 0;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 22px 55px rgba(0, 0, 0, 0.38);
+        isolation: isolate;
+      }
+
+      .record-board::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 50% 21%, rgba(255, 255, 255, 0.045), transparent 25%),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 9%, transparent 91%, rgba(255, 255, 255, 0.025));
+        opacity: 0.52;
+        animation: chalk-breathe 5s ease-in-out infinite;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .chalk-header {
+        position: absolute;
+        left: 4px;
+        top: 0;
+        width: 442px;
+        height: 214px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 34% 44%, rgba(255, 255, 255, 0.055), transparent 27%),
+          radial-gradient(circle at 70% 29%, rgba(255, 255, 255, 0.035), transparent 23%),
+          linear-gradient(180deg, #111413, var(--chalkboard));
+        border-top: 3px solid var(--wood);
+        border-left: 3px solid var(--wood);
+        border-right: 3px solid var(--wood);
+        box-shadow:
+          inset 0 0 0 1px rgba(0, 0, 0, 0.72),
+          inset 0 -20px 28px rgba(0, 0, 0, 0.36);
+      }
+
+      .chalk-header::after {
+        content: "";
+        position: absolute;
+        left: 80px;
+        right: 24px;
+        bottom: 0;
+        height: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 0;
+      }
+
+      .header-title {
+        position: absolute;
+        left: 28px;
+        top: 32px;
+        width: 386px;
+        height: 86px;
+        animation: title-shiver 4.2s ease-in-out infinite;
+      }
+
+      .header-title svg,
+      .header-badge svg,
+      .podium svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .header-title text {
+        fill: var(--ink);
+        font-family: "Amatic SC", "Finger Paint", sans-serif;
+        font-size: 66px;
+        font-weight: 400;
+        letter-spacing: 1.8px;
+        filter: drop-shadow(0.7px 0 0 rgba(255, 255, 255, 0.8));
+      }
+
+      .header-title path,
+      .header-badge path,
+      .header-badge circle,
+      .podium path,
+      .podium line {
+        fill: none;
+        stroke: var(--ink);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .header-title path {
+        stroke-width: 2.2;
+      }
+
+      .header-badge {
+        position: absolute;
+        left: 183px;
+        top: 51px;
+        width: 47px;
+        height: 52px;
+        animation: badge-pulse 2.4s ease-in-out infinite;
+      }
+
+      .header-badge path,
+      .header-badge circle {
+        stroke-width: 2.6;
+      }
+
+      .header-badge text {
+        fill: var(--ink);
+        font-family: "Amatic SC", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .podium {
+        position: absolute;
+        left: 116px;
+        top: 111px;
+        width: 210px;
+        height: 78px;
+        animation: podium-glow 2.8s ease-in-out infinite;
+      }
+
+      .podium path,
+      .podium line {
+        stroke-width: 2.4;
+      }
+
+      .podium text {
+        fill: var(--ink);
+        font-family: "Amatic SC", sans-serif;
+        font-size: 31px;
+        font-weight: 700;
+      }
+
+      .podium .ray {
+        animation: ray-blink 1.8s ease-in-out infinite;
+      }
+
+      .records {
+        position: absolute;
+        left: 37px;
+        right: 37px;
+        top: 228px;
+        display: grid;
+        gap: 13px;
+      }
+
+      .record-row {
+        height: 66px;
+        position: relative;
+        animation: row-drift 4.8s ease-in-out infinite;
+      }
+
+      .record-row:nth-child(2) {
+        animation-delay: -0.4s;
+      }
+
+      .record-row:nth-child(3) {
+        animation-delay: -0.8s;
+      }
+
+      .record-row:nth-child(4) {
+        animation-delay: -1.2s;
+      }
+
+      .record-row:nth-child(5) {
+        animation-delay: -1.6s;
+      }
+
+      .record-row:nth-child(6) {
+        animation-delay: -2s;
+      }
+
+      .record-row:nth-child(7) {
+        animation-delay: -2.4s;
+      }
+
+      .record-text {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 250px;
+      }
+
+      .room,
+      .team,
+      .time {
+        margin: 0;
+        color: var(--ink);
+        text-transform: uppercase;
+        white-space: nowrap;
+        letter-spacing: 0;
+        line-height: 0.93;
+        filter: drop-shadow(1px 0 0 var(--ink));
+      }
+
+      .room {
+        font-family: "Finger Paint", "Bangers", sans-serif;
+        font-size: 18px;
+      }
+
+      .team {
+        margin-top: 7px;
+        font-size: 18px;
+      }
+
+      .time {
+        position: absolute;
+        right: 0;
+        top: 22px;
+        width: 155px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+      }
+
+      .timer {
+        width: 23px;
+        height: 23px;
+        flex: 0 0 23px;
+        animation: timer-tick 1.2s steps(2, end) infinite;
+      }
+
+      .timer svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      @keyframes chalk-breathe {
+        0%,
+        100% {
+          opacity: 0.42;
+        }
+        50% {
+          opacity: 0.68;
+        }
+      }
+
+      @keyframes title-shiver {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(-0.2deg);
+        }
+        50% {
+          transform: translate(1px, 2px) rotate(0.2deg);
+        }
+      }
+
+      @keyframes badge-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.86;
+        }
+        50% {
+          transform: scale(1.06);
+          opacity: 1;
+        }
+      }
+
+      @keyframes podium-glow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+        50% {
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.48));
+        }
+      }
+
+      @keyframes ray-blink {
+        0%,
+        100% {
+          opacity: 0.42;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes row-drift {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        50% {
+          transform: translateX(3px);
+        }
+      }
+
+      @keyframes timer-tick {
+        0% {
+          transform: rotate(-8deg);
+        }
+        100% {
+          transform: rotate(8deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fit-shell">
+      <main class="record-board" aria-labelledby="page-title">
+        <h1 id="page-title" class="sr-only">Quadro de Recordes</h1>
+
+        <header class="chalk-header" aria-hidden="true">
+          <div class="header-title">
+            <svg viewBox="0 0 386 86">
+              <text x="0" y="67">QUADRO</text>
+              <text x="205" y="67">RECORDES</text>
+              <path d="M2 71c35 16 72 13 112 3" />
+            </svg>
+          </div>
+
+          <div class="header-badge">
+            <svg viewBox="0 0 48 56">
+              <path d="M24 2l4 7 8-2 2 8 7 4-5 6 4 8-8 3-1 9-8-2-5 7-5-7-8 2-1-9-8-3 4-8-5-6 7-4 2-8 8 2 4-7z" />
+              <circle cx="24" cy="25" r="13" />
+              <path d="M17 39l-6 14 10-6 5 7 5-15" />
+              <text x="24" y="31" text-anchor="middle">DE</text>
+            </svg>
+          </div>
+
+          <div class="podium">
+            <svg viewBox="0 0 210 78">
+              <line class="ray" x1="32" y1="18" x2="7" y2="5" />
+              <line class="ray" x1="36" y1="35" x2="10" y2="35" />
+              <line class="ray" x1="34" y1="50" x2="9" y2="61" />
+              <line class="ray" x1="178" y1="18" x2="203" y2="5" />
+              <line class="ray" x1="174" y1="35" x2="200" y2="35" />
+              <line class="ray" x1="176" y1="50" x2="201" y2="61" />
+
+              <text x="77" y="36" text-anchor="middle">2</text>
+              <text x="105" y="17" text-anchor="middle">1</text>
+              <text x="144" y="46" text-anchor="middle">3</text>
+
+              <path d="M62 75V48h35v27" />
+              <path d="M97 75V32h40v43" />
+              <path d="M137 75V55h35v20" />
+              <path d="M62 48h35M97 32h40M137 55h35" />
+            </svg>
+          </div>
+        </header>
+
+        <section class="records" aria-label="Lista de recordes">
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: A Última Charada</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: A Maldição Pirata</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: Emboscada</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: Excalibur</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: Mundo Invertido</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: T - Vírus</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+
+          <article class="record-row">
+            <div class="record-text">
+              <p class="room">Sala: Wandinha</p>
+              <p class="team">Equipe: BH Escape</p>
+            </div>
+            <p class="time"><span class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="36" r="22" /><path d="M32 14V6M23 6h18M32 36V22M32 36l9 7" /></svg></span>Tempo: 60:00</p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const boardWidth = 450;
+      const boardHeight = 800;
+
+      function fitBoard() {
+        const viewport = window.visualViewport || window;
+        const scale = Math.min(viewport.width / boardWidth, viewport.height / boardHeight);
+        document.documentElement.style.setProperty("--board-scale", Math.max(scale, 0.1).toFixed(4));
+      }
+
+      fitBoard();
+      window.addEventListener("resize", fitBoard);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", fitBoard);
+      }
+    </script>
+  </body>
+</html>
