@@ -142,66 +142,39 @@
         left: 0;
         top: 0;
         width: 362px;
-        height: 74px;
+        height: 96px;
       }
 
-      .title-word {
+      .title-arc {
         position: absolute;
+        left: 0;
         top: 0;
-        height: 74px;
-        color: var(--chalk);
-        font-family: "Amatic SC", cursive;
-        font-size: 64px;
-        font-weight: 400;
-        letter-spacing: 1.2px;
-        line-height: 0.95;
-        white-space: nowrap;
-        filter: drop-shadow(0.45px 0 0 rgba(255, 255, 255, 0.7));
-        animation: float-luma 4.8s ease-in-out infinite;
-      }
-
-      .title-left {
-        left: 0;
-        width: 140px;
-      }
-
-      .title-right {
-        right: 0;
-        width: 148px;
-        text-align: right;
-        animation-delay: -1.2s;
-      }
-
-      .title-swoosh {
-        position: absolute;
-        left: 0;
-        top: 59px;
-        width: 118px;
-        height: 20px;
-        animation: float-luma 5.2s ease-in-out infinite;
+        width: 362px;
+        height: 96px;
+        animation: float-title 5s ease-in-out infinite;
       }
 
       .badge-mark {
         position: absolute;
-        left: 154px;
-        top: 4px;
-        width: 54px;
-        height: 70px;
-        animation: float-luma 4.3s ease-in-out infinite;
+        left: 160px;
+        top: -7px;
+        width: 42px;
+        height: 58px;
+        animation: float-badge 4.3s ease-in-out infinite;
       }
 
       .podium-mark {
         position: absolute;
-        left: 60px;
-        top: 71px;
+        left: 56px;
+        top: 83px;
         width: 250px;
         height: 82px;
-        animation: float-luma 4.7s ease-in-out infinite;
+        animation: float-podium 4.7s ease-in-out infinite;
       }
 
       .badge-mark svg,
       .podium-mark svg,
-      .title-swoosh svg {
+      .title-arc svg {
         width: 100%;
         height: 100%;
         display: block;
@@ -219,6 +192,17 @@
       .header .rank {
         font-size: 34px;
         font-weight: 700;
+      }
+
+      .title-arc text {
+        font-size: 49px;
+        font-weight: 400;
+        letter-spacing: 1.1px;
+      }
+
+      .title-arc path {
+        stroke: none;
+        filter: none;
       }
 
       .header path,
@@ -242,10 +226,33 @@
       .header .ray {
         stroke-width: 2.8;
         animation: ray-morph 2.4s ease-in-out infinite;
+        transform-box: fill-box;
+        transform-origin: center;
       }
 
-      .header .podium-shape {
-        animation: podium-morph 3.5s ease-in-out infinite;
+      .podium-column {
+        fill: transparent;
+        stroke: var(--chalk);
+        stroke-width: 3;
+      }
+
+      .rank {
+        filter: url("#chalky");
+      }
+
+      .ray-left:nth-of-type(1),
+      .ray-right:nth-of-type(4) {
+        animation-delay: -0.4s;
+      }
+
+      .ray-left:nth-of-type(2),
+      .ray-right:nth-of-type(5) {
+        animation-delay: -1s;
+      }
+
+      .ray-left:nth-of-type(3),
+      .ray-right:nth-of-type(6) {
+        animation-delay: -1.6s;
       }
 
       .entries {
@@ -447,17 +454,45 @@
         }
       }
 
-      @keyframes float-luma {
+      @keyframes float-title {
         0%,
         100% {
           opacity: 0.86;
-          transform: translate(0, 0) rotate(-0.25deg);
+          transform: translate(-1px, 0) rotate(-0.18deg);
           filter: drop-shadow(0.45px 0 0 rgba(255, 255, 255, 0.62)) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
         }
         50% {
           opacity: 1;
-          transform: translate(1.5px, -1px) rotate(0.25deg);
+          transform: translate(1.5px, -1.2px) rotate(0.18deg);
           filter: drop-shadow(0.45px 0 0 rgba(255, 255, 255, 0.8)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.28));
+        }
+      }
+
+      @keyframes float-badge {
+        0%,
+        100% {
+          opacity: 0.82;
+          transform: translate(0, 0) rotate(-1deg) scale(0.98);
+          filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+        50% {
+          opacity: 1;
+          transform: translate(-1.5px, 1.5px) rotate(1.5deg) scale(1.04);
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.32));
+        }
+      }
+
+      @keyframes float-podium {
+        0%,
+        100% {
+          opacity: 0.88;
+          transform: translate(0, 0) rotate(0.12deg);
+          filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+        }
+        50% {
+          opacity: 1;
+          transform: translate(1px, -1.5px) rotate(-0.12deg);
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.22));
         }
       }
 
@@ -466,24 +501,12 @@
         100% {
           stroke-width: 2.2;
           opacity: 0.48;
-          transform: translateX(0);
+          transform: translate(0, 0) scaleX(0.78);
         }
         50% {
           stroke-width: 3.4;
           opacity: 1;
-          transform: translateX(2px);
-        }
-      }
-
-      @keyframes podium-morph {
-        0%,
-        100% {
-          stroke-width: 2.5;
-          opacity: 0.9;
-        }
-        50% {
-          stroke-width: 3.4;
-          opacity: 1;
+          transform: translate(2px, -1px) scaleX(1.18);
         }
       }
 
@@ -548,11 +571,15 @@
             </svg>
 
             <div class="title-row">
-              <span class="title-word title-left">QUADRO</span>
-              <span class="title-word title-right">RECORDES</span>
-              <span class="title-swoosh">
-                <svg viewBox="0 0 118 20">
-                  <path class="thin" d="M2 8c24 13 66 13 114 1" />
+              <span class="title-arc">
+                <svg viewBox="0 0 362 96">
+                  <path id="title-arc-path" d="M 24 82 C 80 0, 282 0, 338 82" />
+                  <text>
+                    <textPath href="#title-arc-path" startOffset="24%" text-anchor="middle">QUADRO</textPath>
+                  </text>
+                  <text>
+                    <textPath href="#title-arc-path" startOffset="76%" text-anchor="middle">RECORDES</textPath>
+                  </text>
                 </svg>
               </span>
               <span class="badge-mark">
@@ -567,17 +594,37 @@
 
             <div class="podium-mark">
               <svg viewBox="0 0 250 82">
-                <text class="rank" x="103" y="31" text-anchor="middle">2</text>
-                <text class="rank" x="143" y="15" text-anchor="middle">1</text>
-                <text class="rank" x="181" y="40" text-anchor="middle">3</text>
-                <path class="podium-shape medium" d="M75 80v-31h43v31M118 80V31h49v49M167 80v-25h43v25M75 49h43M118 31h49M167 55h43" />
+                <rect class="podium-column podium-column-left" x="75" y="46" width="43" height="34">
+                  <animate attributeName="y" values="46;28;55;46" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="height" values="34;52;25;34" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                </rect>
+                <rect class="podium-column podium-column-middle" x="118" y="28" width="49" height="52">
+                  <animate attributeName="y" values="28;55;46;28" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="height" values="52;25;34;52" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                </rect>
+                <rect class="podium-column podium-column-right" x="167" y="55" width="43" height="25">
+                  <animate attributeName="y" values="55;46;28;55" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="height" values="25;34;52;25" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                </rect>
+                <text class="rank" x="142.5" y="20" text-anchor="middle">1
+                  <animate attributeName="x" values="142.5;96.5;188.5;142.5" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="y" values="20;20;20;20" dur="9s" repeatCount="indefinite" />
+                </text>
+                <text class="rank" x="96.5" y="38" text-anchor="middle">2
+                  <animate attributeName="x" values="96.5;188.5;142.5;96.5" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="y" values="38;38;38;38" dur="9s" repeatCount="indefinite" />
+                </text>
+                <text class="rank" x="188.5" y="47" text-anchor="middle">3
+                  <animate attributeName="x" values="188.5;142.5;96.5;188.5" dur="9s" repeatCount="indefinite" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1" />
+                  <animate attributeName="y" values="47;47;47;47" dur="9s" repeatCount="indefinite" />
+                </text>
 
-                <line class="ray" x1="48" y1="26" x2="15" y2="8" />
-                <line class="ray" x1="43" y1="44" x2="12" y2="43" />
-                <line class="ray" x1="47" y1="61" x2="17" y2="74" />
-                <line class="ray" x1="218" y1="26" x2="238" y2="10" />
-                <line class="ray" x1="221" y1="44" x2="242" y2="43" />
-                <line class="ray" x1="218" y1="61" x2="237" y2="73" />
+                <line class="ray ray-left" x1="48" y1="26" x2="15" y2="8" />
+                <line class="ray ray-left" x1="43" y1="44" x2="12" y2="43" />
+                <line class="ray ray-left" x1="47" y1="61" x2="17" y2="74" />
+                <line class="ray ray-right" x1="218" y1="26" x2="238" y2="10" />
+                <line class="ray ray-right" x1="221" y1="44" x2="242" y2="43" />
+                <line class="ray ray-right" x1="218" y1="61" x2="237" y2="73" />
               </svg>
             </div>
           </header>
