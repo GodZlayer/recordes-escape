@@ -37,6 +37,14 @@
         --list-brightness-shadow: 3px;
         --list-brightness-duration: 4.8s;
         --list-brightness-play-state: running;
+        --photo-float-distance: 4px;
+        --photo-float-duration: 5.2s;
+        --photo-float-play-state: running;
+        --photo-brightness-max: 1.32;
+        --photo-brightness-mid: 1.2;
+        --photo-brightness-shadow: 5px;
+        --photo-brightness-duration: 4.8s;
+        --photo-brightness-play-state: running;
       }
 
       * {
@@ -695,9 +703,92 @@
         transform: scale(1);
       }
 
+      .photo-design {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+      }
+
+      .photo-float-shell,
+      .photo-brightness {
+        position: absolute;
+        inset: 0;
+      }
+
+      .photo-brightness {
+        --brightness-max: var(--photo-brightness-max);
+        --brightness-mid: var(--photo-brightness-mid);
+        --brightness-shadow: var(--photo-brightness-shadow);
+      }
+
+      .photo-float-item {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .frame[data-photo-float="0"] .photo-float-shell {
+        animation: photo-float-same var(--photo-float-duration) ease-in-out infinite;
+        animation-play-state: var(--photo-float-play-state);
+      }
+
+      .frame[data-photo-float="1"] .photo-float-item {
+        animation-duration: var(--photo-float-duration);
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-play-state: var(--photo-float-play-state);
+      }
+
+      .frame[data-photo-float="1"] .photo-float-a {
+        animation-name: photo-float-a;
+      }
+
+      .frame[data-photo-float="1"] .photo-float-b {
+        animation-name: photo-float-b;
+        animation-delay: calc(var(--photo-float-duration) * -0.18);
+      }
+
+      .frame[data-photo-float="1"] .photo-float-c {
+        animation-name: photo-float-c;
+        animation-delay: calc(var(--photo-float-duration) * -0.36);
+      }
+
+      .frame[data-photo-bright="0"] .photo-brightness {
+        filter: none;
+      }
+
+      .frame[data-photo-bright="1"] .photo-brightness {
+        filter: brightness(var(--photo-brightness-max)) drop-shadow(0 0 var(--photo-brightness-shadow) rgba(255, 255, 255, 0.38));
+      }
+
+      .frame[data-photo-bright="2"] .photo-brightness {
+        animation-duration: var(--photo-brightness-duration);
+        animation-iteration-count: infinite;
+        animation-play-state: var(--photo-brightness-play-state);
+      }
+
+      .frame[data-photo-bright="2"][data-photo-bright-type="1"] .photo-brightness {
+        animation-name: brightness-wave;
+        animation-timing-function: ease-in-out;
+      }
+
+      .frame[data-photo-bright="2"][data-photo-bright-type="2"] .photo-brightness {
+        animation-name: brightness-square;
+        animation-timing-function: steps(1, end);
+      }
+
+      .frame[data-photo-bright="2"][data-photo-bright-type="3"] .photo-brightness {
+        animation-name: brightness-square-variant;
+        animation-timing-function: steps(1, end);
+      }
+
+      .frame[data-photo-bright="2"][data-photo-bright-type="4"] .photo-brightness {
+        animation-name: brightness-triangle;
+        animation-timing-function: linear;
+      }
+
       .photo-title {
         position: absolute;
-        z-index: 4;
         left: 24px;
         right: 24px;
         top: 44px;
@@ -714,18 +805,15 @@
           0.7px 0 rgba(255, 255, 255, 0.6),
           -0.5px 0 rgba(255, 255, 255, 0.35),
           0 0 10px rgba(0, 0, 0, 0.72);
-        animation: float-title 5s ease-in-out infinite;
       }
 
       .photo-info {
         position: absolute;
-        z-index: 4;
         left: 28px;
         right: 28px;
         bottom: 40px;
         display: grid;
         gap: 9px;
-        animation: entry-drift 5.2s ease-in-out infinite;
       }
 
       .photo-row {
@@ -735,14 +823,6 @@
         grid-template-columns: 34px 1fr;
         align-items: center;
         gap: 8px;
-      }
-
-      .photo-row:nth-child(2) {
-        animation: entry-drift 5.4s ease-in-out infinite -1.1s;
-      }
-
-      .photo-row:nth-child(3) {
-        animation: entry-drift 5.6s ease-in-out infinite -2.2s;
       }
 
       .photo-icon {
@@ -914,6 +994,46 @@
         }
         50% {
           transform: translate(calc(var(--list-float-distance) * 0.45), var(--list-float-distance));
+        }
+      }
+
+      @keyframes photo-float-same {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(var(--photo-float-distance), calc(var(--photo-float-distance) * -0.55));
+        }
+      }
+
+      @keyframes photo-float-a {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(var(--photo-float-distance), calc(var(--photo-float-distance) * -0.65));
+        }
+      }
+
+      @keyframes photo-float-b {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(calc(var(--photo-float-distance) * -0.75), calc(var(--photo-float-distance) * 0.45));
+        }
+      }
+
+      @keyframes photo-float-c {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(calc(var(--photo-float-distance) * 0.45), var(--photo-float-distance));
         }
       }
 
@@ -1331,45 +1451,52 @@
           <section id="entries" class="entries" aria-label="Lista de recordes"></section>
           <section class="photo-view" aria-live="polite" aria-label="Foto da equipe recordista">
             <img id="record-photo" class="photo-image" alt="" />
-            <h2 class="photo-title">RECORDE ATUAL</h2>
-            <div class="photo-info">
-              <div class="photo-row">
-                <span class="icon-label photo-icon" aria-label="Sala">
-                  <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M9 28V5h14v23" />
-                    <path d="M13 28V9h10" />
-                    <path d="M18 17h1" />
-                    <path d="M6 28h20" />
-                  </svg>
-                </span>
-                <span class="photo-tape photo-room"><span id="photo-room" class="chalk-text"></span></span>
+            <div id="photo-design" class="photo-design"></div>
+            <template id="photo-design-fallback">
+              <div class="photo-float-shell">
+                <div class="photo-brightness">
+                  <h2 class="photo-title photo-float-item photo-float-a">RECORDE ATUAL</h2>
+                  <div class="photo-info">
+                    <div class="photo-row photo-float-item photo-float-b">
+                      <span class="icon-label photo-icon" aria-label="Sala">
+                        <svg viewBox="0 0 32 32" aria-hidden="true">
+                          <path d="M9 28V5h14v23" />
+                          <path d="M13 28V9h10" />
+                          <path d="M18 17h1" />
+                          <path d="M6 28h20" />
+                        </svg>
+                      </span>
+                      <span class="photo-tape photo-room"><span id="photo-room" class="chalk-text"></span></span>
+                    </div>
+                    <div class="photo-row photo-float-item photo-float-c">
+                      <span class="icon-label photo-icon" aria-label="Equipe">
+                        <svg viewBox="0 0 32 32" aria-hidden="true">
+                          <circle cx="16" cy="10" r="4" />
+                          <path d="M9 27c1-6 3-9 7-9s6 3 7 9" />
+                          <circle cx="7.5" cy="14" r="3" />
+                          <circle cx="24.5" cy="14" r="3" />
+                          <path d="M3 27c.7-4 2.3-6.5 5-7" />
+                          <path d="M29 27c-.7-4-2.3-6.5-5-7" />
+                        </svg>
+                      </span>
+                      <span class="photo-tape photo-team"><span id="photo-team" class="chalk-text"></span></span>
+                    </div>
+                    <div class="photo-row photo-float-item photo-float-b">
+                      <span class="icon-label photo-icon" aria-label="Tempo">
+                        <svg viewBox="0 0 32 32" aria-hidden="true">
+                          <circle cx="16" cy="18" r="10" />
+                          <path d="M16 8V4" />
+                          <path d="M12 4h8" />
+                          <path d="M16 18v-6" />
+                          <path d="M16 18l5 4" />
+                        </svg>
+                      </span>
+                      <span class="photo-tape photo-time"><span id="photo-time" class="chalk-text"></span></span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="photo-row">
-                <span class="icon-label photo-icon" aria-label="Equipe">
-                  <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <circle cx="16" cy="10" r="4" />
-                    <path d="M9 27c1-6 3-9 7-9s6 3 7 9" />
-                    <circle cx="7.5" cy="14" r="3" />
-                    <circle cx="24.5" cy="14" r="3" />
-                    <path d="M3 27c.7-4 2.3-6.5 5-7" />
-                    <path d="M29 27c-.7-4-2.3-6.5-5-7" />
-                  </svg>
-                </span>
-                <span class="photo-tape photo-team"><span id="photo-team" class="chalk-text"></span></span>
-              </div>
-              <div class="photo-row">
-                <span class="icon-label photo-icon" aria-label="Tempo">
-                  <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <circle cx="16" cy="18" r="10" />
-                    <path d="M16 8V4" />
-                    <path d="M12 4h8" />
-                    <path d="M16 18v-6" />
-                    <path d="M16 18l5 4" />
-                  </svg>
-                </span>
-                <span class="photo-tape photo-time"><span id="photo-time" class="chalk-text"></span></span>
-              </div>
-            </div>
+            </template>
           </section>
           <span class="screen-wipe" aria-hidden="true"></span>
         </section>
@@ -1423,10 +1550,13 @@
       const fallbackConfig = {
         roomCount: 7,
         designNumber: 2,
+        photoDesignNumber: 1,
         topFloat: { mode: 1, strength: 1, speed: 1 },
         listFloat: { mode: 2, strength: 1, speed: 1 },
+        photoFloat: { mode: 1, strength: 1, speed: 1 },
         topBrightness: { active: 2, strength: 1, type: 1, speed: 1 },
         listBrightness: { active: 2, strength: 1, type: 1, speed: 1 },
+        photoBrightness: { active: 2, strength: 1, type: 1, speed: 1 },
       };
       const fallbackRecords = [
         { id: "1", room: "Emboscada", team: "Vigil-Antes", time: "32:43", style: "plain" },
@@ -1511,13 +1641,17 @@
       function configFromXml(xml) {
         const topSection = xml.querySelector("topo, controlesTopo, topControls");
         const listSection = xml.querySelector("lista, controleLista, listControls");
+        const photoSection = xml.querySelector("foto, photo, telaFoto, photoScreen");
         return {
           roomCount: clampRoomCount(numberFromXml(xml, ["salas", "rooms", "roomCount"], fallbackConfig.roomCount)),
           designNumber: Math.max(numberFromXml(xml, ["design", "topDesign"], fallbackConfig.designNumber), 1),
+          photoDesignNumber: Math.max(numberFromSection(photoSection, ["design"], ["numero", "number", "valor", "value"], fallbackConfig.photoDesignNumber), 1),
           topFloat: floatConfigFromSection(topSection, fallbackConfig.topFloat, 1),
           listFloat: floatConfigFromSection(listSection, fallbackConfig.listFloat, 2),
+          photoFloat: floatConfigFromSection(photoSection, fallbackConfig.photoFloat, 1),
           topBrightness: brightnessConfigFromSection(topSection, fallbackConfig.topBrightness),
           listBrightness: brightnessConfigFromSection(listSection, fallbackConfig.listBrightness),
+          photoBrightness: brightnessConfigFromSection(photoSection, fallbackConfig.photoBrightness),
         };
       }
 
@@ -1547,14 +1681,19 @@
         const frame = document.querySelector(".frame");
         frame.dataset.topFloat = config.topFloat.mode.toString();
         frame.dataset.listFloat = config.listFloat.mode.toString();
+        frame.dataset.photoFloat = config.photoFloat.mode.toString();
         frame.dataset.topBright = config.topBrightness.active.toString();
         frame.dataset.topBrightType = config.topBrightness.type.toString();
         frame.dataset.listBright = config.listBrightness.active.toString();
         frame.dataset.listBrightType = config.listBrightness.type.toString();
+        frame.dataset.photoBright = config.photoBrightness.active.toString();
+        frame.dataset.photoBrightType = config.photoBrightness.type.toString();
         setFloatVariables("top", config.topFloat, 4, 4.8);
         setFloatVariables("list", config.listFloat, 2, 5.2);
+        setFloatVariables("photo", config.photoFloat, 4, 5.2);
         setBrightnessVariables("top", config.topBrightness, 4.8);
         setBrightnessVariables("list", config.listBrightness, 4.8);
+        setBrightnessVariables("photo", config.photoBrightness, 4.8);
       }
 
       function recordsFromXml(xml) {
@@ -1613,6 +1752,24 @@
           }
         }
         header.innerHTML = `<div class="top-brightness">${designHtml}</div>`;
+      }
+
+      async function loadPhotoDesign(designNumber) {
+        const design = document.querySelector("#photo-design");
+        let designHtml = "";
+        try {
+          designHtml = await fetchTextFile(`photo-design-${designNumber}.html`);
+        } catch (error) {
+          designHtml = document.querySelector(`#photo-design-${designNumber}-fallback`)?.innerHTML || "";
+          if (!designHtml) {
+            try {
+              designHtml = await fetchTextFile("photo-design-1.html");
+            } catch (fallbackError) {
+              designHtml = document.querySelector("#photo-design-fallback")?.innerHTML || "";
+            }
+          }
+        }
+        design.innerHTML = designHtml;
       }
 
       function renderRecords(records, roomCount) {
@@ -1710,6 +1867,7 @@
         const config = await loadConfig();
         applyConfig(config);
         await loadTopDesign(config.designNumber);
+        await loadPhotoDesign(config.photoDesignNumber);
         try {
           const text = await fetchTextFile("records.xml");
           const xml = new DOMParser().parseFromString(text, "application/xml");

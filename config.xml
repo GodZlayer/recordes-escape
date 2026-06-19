@@ -20,4 +20,14 @@
     <tipoBrilho>1</tipoBrilho>
     <velocidadeWaveBrilho>1.0</velocidadeWaveBrilho>
   </lista>
+  <foto>
+    <design numero="1" />
+    <floatIndividual>1</floatIndividual>
+    <forcaFloat>1.0</forcaFloat>
+    <velocidadeFloat>1.0</velocidadeFloat>
+    <brilhoSempreAtivo>2</brilhoSempreAtivo>
+    <forcaBrilhoMaxima>1.0</forcaBrilhoMaxima>
+    <tipoBrilho>1</tipoBrilho>
+    <velocidadeWaveBrilho>1.0</velocidadeWaveBrilho>
+  </foto>
 </config>
