@@ -226,6 +226,57 @@
         filter: none;
       }
 
+      .design-2-title {
+        top: -4px;
+        height: 154px;
+      }
+
+      .design-2-title svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        overflow: visible;
+      }
+
+      .header .design-2-title-text {
+        filter: none;
+      }
+
+      .header .design-2-trophy path,
+      .header .design-2-trophy rect,
+      .header .design-2-lock path,
+      .header .design-2-lock rect,
+      .header .design-2-lock circle,
+      .header .design-2-rays line {
+        fill: none;
+        stroke: var(--chalk);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: none;
+      }
+
+      .header .design-2-trophy path {
+        stroke-width: 4.2;
+      }
+
+      .header .design-2-lock path,
+      .header .design-2-lock rect,
+      .header .design-2-lock circle {
+        stroke-width: 3.8;
+      }
+
+      .header .design-2-rays line {
+        stroke-width: 3.2;
+      }
+
+      .header .design-2-star-fill,
+      .header .design-2-side-stars polygon {
+        fill: var(--chalk);
+        stroke: none;
+        filter: none;
+      }
+
       .header path,
       .header line,
       .header circle {
@@ -1191,6 +1242,92 @@
               </svg>
             </div>
           </template>
+          <template id="top-design-2-fallback">
+            <svg width="0" height="0">
+              <defs>
+                <filter id="chalky">
+                  <feTurbulence baseFrequency="0.75" numOctaves="2" seed="8" type="fractalNoise" />
+                  <feDisplacementMap in="SourceGraphic" scale="0.55" />
+                </filter>
+              </defs>
+            </svg>
+
+            <div class="title-row design-2-title">
+              <svg viewBox="0 0 362 154" aria-hidden="true">
+                <defs>
+                  <path id="design-2-title-arc-fallback" d="M 37 73 C 84 10, 278 10, 325 73" />
+                </defs>
+
+                <g class="top-float-item top-float-a">
+                  <text
+                    class="design-2-title-text"
+                    text-anchor="middle"
+                    style="font-family: 'Arial Black', Impact, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.8px; fill: currentColor; stroke: none;"
+                  >
+                    <textPath href="#design-2-title-arc-fallback" startOffset="50%">QUADRO DE RECORDES</textPath>
+                  </text>
+                </g>
+
+                <g class="top-float-item top-float-b design-2-rays">
+                  <line x1="181" y1="38" x2="181" y2="25" />
+                  <line x1="160" y1="43" x2="153" y2="32" />
+                  <line x1="202" y1="43" x2="209" y2="32" />
+                  <line x1="142" y1="58" x2="132" y2="50" />
+                  <line x1="220" y1="58" x2="230" y2="50" />
+                </g>
+
+                <g class="top-float-item top-float-b design-2-trophy">
+                  <path d="M163 57h36v23c0 11-8 19-18 19s-18-8-18-19z" />
+                  <path d="M168 99h26" />
+                  <path d="M175 99v14" />
+                  <path d="M187 99v14" />
+                  <path d="M171 113h20l3 9h-26z" />
+                  <path d="M166 122h30" />
+                  <path d="M163 64h-17c0 17 7 27 20 28" />
+                  <path d="M199 64h17c0 17-7 27-20 28" />
+                  <path d="M151 70c1 8 5 13 13 15" />
+                  <path d="M211 70c-1 8-5 13-13 15" />
+                  <polygon class="design-2-star-fill" points="181,66 185,74 194,75 187,81 189,90 181,85 173,90 175,81 168,75 177,74" />
+                </g>
+
+                <g class="design-2-lock design-2-lock-left" transform="translate(102 96) rotate(-45)">
+                  <g class="top-float-item top-float-c">
+                    <path d="M-20-11c0-12 9-22 21-22s21 10 21 22" />
+                    <path d="M-10-11c0-7 4-12 11-12s11 5 11 12" />
+                    <rect x="-16" y="-11" width="34" height="27" rx="3" />
+                    <path d="M0-1v9" />
+                    <circle cx="0" cy="-2" r="3" />
+                    <path d="M-27-24l-6-6" />
+                    <path d="M-20-32l-2-8" />
+                    <path d="M-33-17l-8-2" />
+                  </g>
+                </g>
+
+                <g class="design-2-lock design-2-lock-right" transform="translate(260 96) rotate(45)">
+                  <g class="top-float-item top-float-c">
+                    <path d="M-20-11c0-12 9-22 21-22s21 10 21 22" />
+                    <path d="M-10-11c0-7 4-12 11-12s11 5 11 12" />
+                    <rect x="-16" y="-11" width="34" height="27" rx="3" />
+                    <path d="M0-1v9" />
+                    <circle cx="0" cy="-2" r="3" />
+                    <path d="M27-24l6-6" />
+                    <path d="M20-32l2-8" />
+                    <path d="M33-17l8-2" />
+                  </g>
+                </g>
+
+                <g class="top-float-item top-float-a design-2-side-stars design-2-left-stars">
+                  <polygon points="55,81 59,88 67,89 61,94 62,102 55,98 48,102 49,94 43,89 51,88" />
+                  <polygon points="39,109 43,116 51,117 45,122 46,130 39,126 32,130 33,122 27,117 35,116" />
+                </g>
+
+                <g class="top-float-item top-float-a design-2-side-stars design-2-right-stars">
+                  <polygon points="307,81 311,88 319,89 313,94 314,102 307,98 300,102 301,94 295,89 303,88" />
+                  <polygon points="323,109 327,116 335,117 329,122 330,130 323,126 316,130 317,122 311,117 319,116" />
+                </g>
+              </svg>
+            </div>
+          </template>
           <section id="entries" class="entries" aria-label="Lista de recordes"></section>
           <section class="photo-view" aria-live="polite" aria-label="Foto da equipe recordista">
             <img id="record-photo" class="photo-image" alt="" />
@@ -1285,7 +1422,7 @@
       const transitionDuration = 1150;
       const fallbackConfig = {
         roomCount: 7,
-        designNumber: 1,
+        designNumber: 2,
         topFloat: { mode: 1, strength: 1, speed: 1 },
         listFloat: { mode: 2, strength: 1, speed: 1 },
         topBrightness: { active: 2, strength: 1, type: 1, speed: 1 },
@@ -1466,10 +1603,13 @@
         try {
           designHtml = await fetchTextFile(`design-${designNumber}.html`);
         } catch (error) {
-          try {
-            designHtml = await fetchTextFile("design-1.html");
-          } catch (fallbackError) {
-            designHtml = document.querySelector("#top-design-fallback")?.innerHTML || "";
+          designHtml = document.querySelector(`#top-design-${designNumber}-fallback`)?.innerHTML || "";
+          if (!designHtml) {
+            try {
+              designHtml = await fetchTextFile("design-1.html");
+            } catch (fallbackError) {
+              designHtml = document.querySelector("#top-design-fallback")?.innerHTML || "";
+            }
           }
         }
         header.innerHTML = `<div class="top-brightness">${designHtml}</div>`;
