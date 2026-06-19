@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <salas quantidade="7" />
+  <design numero="1" />
+  <topo>
+    <floatIndividual>1</floatIndividual>
+    <forcaFloat>1.0</forcaFloat>
+    <velocidadeFloat>1.0</velocidadeFloat>
+    <brilhoSempreAtivo>2</brilhoSempreAtivo>
+    <forcaBrilhoMaxima>1.0</forcaBrilhoMaxima>
+    <tipoBrilho>1</tipoBrilho>
+    <velocidadeWaveBrilho>1.0</velocidadeWaveBrilho>
+  </topo>
+  <lista>
+    <floatIndividual>2</floatIndividual>
+    <forcaFloat>1.0</forcaFloat>
+    <velocidadeFloat>1.0</velocidadeFloat>
+    <brilhoSempreAtivo>2</brilhoSempreAtivo>
+    <forcaBrilhoMaxima>1.0</forcaBrilhoMaxima>
+    <tipoBrilho>1</tipoBrilho>
+    <velocidadeWaveBrilho>1.0</velocidadeWaveBrilho>
+  </lista>
+</config>
