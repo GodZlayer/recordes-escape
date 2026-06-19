@@ -6,9 +6,9 @@
     <time>32:43</time>
   </record>
   <record id="2" style="plain">
-    <room></room>
-    <team></team>
-    <time></time>
+    <room>Cavaleiro das trevas</room>
+    <team>TGDevs</team>
+    <time>60:00</time>
   </record>
   <record id="3" style="script">
     <room>Mundo Invertido</room>
@@ -22,7 +22,7 @@
   </record>
   <record id="5" style="script">
     <room>T-Vírus</room>
-    <team>Só Domi</team>
+    <team>Só Dami</team>
     <time>39:29</time>
   </record>
   <record id="6" style="script">
