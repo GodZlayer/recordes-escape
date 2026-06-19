@@ -866,6 +866,113 @@
         font-weight: 700;
       }
 
+      .photo-design-2 .photo-brightness {
+        background:
+          linear-gradient(180deg, transparent 0 48%, rgba(0, 0, 0, 0.18) 64%, rgba(0, 0, 0, 0.82) 100%);
+      }
+
+      .photo-2-dock {
+        position: absolute;
+        left: 22px;
+        right: 22px;
+        bottom: 28px;
+        display: grid;
+        grid-template-columns: 112px 1fr;
+        grid-template-rows: 54px 118px;
+        gap: 8px 10px;
+      }
+
+      .photo-2-logo {
+        position: relative;
+        grid-column: 1;
+        grid-row: 2;
+        width: 112px;
+        height: 118px;
+        display: grid;
+        place-items: center;
+        align-self: stretch;
+        justify-self: stretch;
+        overflow: hidden;
+        background: rgba(8, 8, 8, 0.62);
+        border-left: 2px solid rgba(248, 248, 242, 0.58);
+        border-right: 2px solid rgba(248, 248, 242, 0.58);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.52);
+      }
+
+      .photo-room-logo {
+        width: 94px;
+        max-height: 96px;
+        object-fit: contain;
+        filter:
+          drop-shadow(0 3px 0 rgba(0, 0, 0, 0.62))
+          drop-shadow(0 0 14px rgba(255, 255, 255, 0.16));
+      }
+
+      .photo-2-room-strip {
+        position: relative;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 14px;
+        color: var(--chalk);
+        background:
+          linear-gradient(100deg, rgba(255, 255, 255, 0.06), transparent 30%, rgba(255, 255, 255, 0.09) 62%, transparent),
+          rgba(10, 10, 10, 0.72);
+        border-top: 2px solid rgba(248, 248, 242, 0.78);
+        border-bottom: 2px solid rgba(248, 248, 242, 0.72);
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.55);
+        transform: rotate(-0.6deg);
+      }
+
+      .photo-room-name {
+        font-family: "Caveat Brush", cursive;
+        font-size: 36px;
+        line-height: 1;
+        text-align: center;
+        text-shadow:
+          0.7px 0 rgba(255, 255, 255, 0.5),
+          0 0 11px rgba(0, 0, 0, 0.78);
+      }
+
+      .photo-2-record {
+        position: relative;
+        grid-column: 2;
+        grid-row: 2;
+        min-height: 118px;
+        display: grid;
+        align-content: center;
+        gap: 8px;
+        padding: 14px 16px;
+        color: var(--chalk);
+        background:
+          repeating-linear-gradient(92deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 12px),
+          rgba(8, 8, 8, 0.74);
+        border-left: 3px solid rgba(248, 248, 242, 0.66);
+        border-right: 3px solid rgba(248, 248, 242, 0.66);
+        box-shadow: 0 7px 18px rgba(0, 0, 0, 0.58);
+      }
+
+      .photo-2-team,
+      .photo-2-time {
+        display: block;
+        line-height: 1.05;
+        text-align: center;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, 0.62);
+      }
+
+      .photo-2-team {
+        font-family: "Caveat Brush", cursive;
+        font-size: 30px;
+      }
+
+      .photo-2-time {
+        font-size: 36px;
+        font-weight: 700;
+      }
+
       .screen-wipe {
         position: absolute;
         inset: 0;
@@ -1497,6 +1604,24 @@
                 </div>
               </div>
             </template>
+            <template id="photo-design-2-fallback">
+              <div class="photo-float-shell photo-design-2">
+                <div class="photo-brightness">
+                  <div class="photo-2-dock">
+                    <div class="photo-2-logo photo-float-item photo-float-a">
+                      <img id="photo-room-logo" class="photo-room-logo" alt="" />
+                    </div>
+                    <div class="photo-2-room-strip photo-float-item photo-float-b">
+                      <span id="photo-room" class="photo-room-name"></span>
+                    </div>
+                    <div class="photo-2-record photo-float-item photo-float-c">
+                      <span id="photo-team" class="photo-2-team"></span>
+                      <span id="photo-time" class="photo-2-time"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
           </section>
           <span class="screen-wipe" aria-hidden="true"></span>
         </section>
@@ -1550,7 +1675,7 @@
       const fallbackConfig = {
         roomCount: 7,
         designNumber: 2,
-        photoDesignNumber: 1,
+        photoDesignNumber: 2,
         topFloat: { mode: 1, strength: 1, speed: 1 },
         listFloat: { mode: 2, strength: 1, speed: 1 },
         photoFloat: { mode: 1, strength: 1, speed: 1 },
@@ -1567,6 +1692,26 @@
         { id: "6", room: "Wandinha", team: "Tramuz B12", time: "35:19", style: "script" },
         { id: "7", room: "Excalibur", team: "", time: "", style: "script" },
       ];
+      const roomLogoById = {
+        1: "salaslogos/Emboscada.svg",
+        2: "salaslogos/Charada.svg",
+        3: "salaslogos/MundoInvertido.svg",
+        4: "salaslogos/MaldicaoPirata.svg",
+        5: "salaslogos/TVirus.svg",
+        6: "salaslogos/Wandinha.svg",
+        7: "salaslogos/Excalibur.svg",
+      };
+      const roomLogoByName = {
+        emboscada: roomLogoById[1],
+        charada: roomLogoById[2],
+        cavaleirodastrevas: roomLogoById[2],
+        mundoinvertido: roomLogoById[3],
+        amaldicaopirata: roomLogoById[4],
+        maldicaopirata: roomLogoById[4],
+        tvirus: roomLogoById[5],
+        wandinha: roomLogoById[6],
+        excalibur: roomLogoById[7],
+      };
       let activePhotoRecords = [];
       let photoIndex = 0;
       let cycleTimer = 0;
@@ -1707,6 +1852,7 @@
       }
 
       function applyTextFit(element, value, baseSize) {
+        if (!element) return;
         element.textContent = value;
         element.style.fontSize = `${baseSize}px`;
         requestAnimationFrame(() => {
@@ -1716,6 +1862,19 @@
             element.style.fontSize = `${size}px`;
           }
         });
+      }
+
+      function normalizeRoomKey(value) {
+        return (value || "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "");
+      }
+
+      function logoPathForRecord(record) {
+        const id = Number.parseInt(record.id, 10);
+        return roomLogoById[id] || roomLogoByName[normalizeRoomKey(record.room)] || "";
       }
 
       async function fetchTextFile(path) {
@@ -1804,6 +1963,7 @@
         const room = document.querySelector("#photo-room");
         const team = document.querySelector("#photo-team");
         const time = document.querySelector("#photo-time");
+        const logo = document.querySelector("#photo-room-logo");
         const id = Number.parseInt(record.id, 10);
         const candidates = [`fotos/${id}.jpeg`, `fotos/${id}.png`, `fotos/${id}.jpg`];
         let candidateIndex = 0;
@@ -1815,9 +1975,17 @@
         };
         photo.src = candidates[candidateIndex];
         photo.alt = `Foto da equipe recordista da sala ${record.room}`;
-        applyTextFit(room, record.room, record.style === "plain" ? 28 : 36);
-        applyTextFit(team, record.team, 28);
-        applyTextFit(time, record.time, 34);
+        if (logo) {
+          const logoSrc = logoPathForRecord(record);
+          logo.hidden = !logoSrc;
+          if (logoSrc) {
+            logo.src = logoSrc;
+            logo.alt = `Logo da sala ${record.room || id}`;
+          }
+        }
+        applyTextFit(room, record.room, room?.classList.contains("photo-room-name") ? 36 : record.style === "plain" ? 28 : 36);
+        applyTextFit(team, record.team, team?.classList.contains("photo-2-team") ? 30 : 28);
+        applyTextFit(time, record.time, time?.classList.contains("photo-2-time") ? 36 : 34);
       }
 
       function runWipe() {
