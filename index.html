@@ -73,6 +73,33 @@
         position: relative;
       }
 
+      .fullscreen-button {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 20;
+        min-width: 146px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 2px solid rgba(248, 248, 242, 0.76);
+        border-radius: 6px;
+        color: var(--chalk);
+        background: rgba(8, 8, 8, 0.82);
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+        cursor: pointer;
+        font: 700 18px/1 "Kalam", cursive;
+      }
+
+      .fullscreen-button:hover,
+      .fullscreen-button:focus-visible {
+        background: rgba(32, 36, 39, 0.94);
+        outline: none;
+      }
+
+      .fullscreen-button.is-hidden {
+        display: none;
+      }
+
       .frame {
         width: var(--art-width);
         height: var(--art-height);
@@ -1671,6 +1698,7 @@
     </style>
   </head>
   <body>
+    <button class="fullscreen-button" id="fullscreen-button" type="button">Tela cheia</button>
     <div class="fit-shell">
       <main class="frame" aria-labelledby="page-title">
         <h1 id="page-title" class="sr-only">Quadro de Recordes</h1>
@@ -2366,6 +2394,38 @@
         cycleTimer = window.setTimeout(showNextPhoto, delay);
       }
 
+      async function enterFullscreen() {
+        if (document.fullscreenElement) return;
+
+        const page = document.documentElement;
+        const request =
+          page.requestFullscreen ||
+          page.webkitRequestFullscreen ||
+          page.msRequestFullscreen;
+
+        if (!request) return;
+
+        try {
+          await request.call(page);
+        } catch (error) {
+          // Alguns navegadores bloqueiam fullscreen automatico sem interacao do usuario.
+        }
+      }
+
+      function setupFullscreenButton() {
+        const button = document.querySelector("#fullscreen-button");
+        if (!button) return;
+
+        button.addEventListener("click", async () => {
+          await enterFullscreen();
+          button.classList.add("is-hidden");
+        });
+
+        window.setTimeout(() => {
+          button.classList.add("is-hidden");
+        }, 10000);
+      }
+
       function startPhotoCycle(records, roomCount) {
         const frame = document.querySelector(".frame");
         activePhotoRecords = records.filter((record) => isActivePhotoRecord(record, roomCount));
@@ -2395,6 +2455,7 @@
 
       fitBoard();
       loadRecords();
+      setupFullscreenButton();
       window.addEventListener("resize", fitBoard);
       if (window.visualViewport) {
         window.visualViewport.addEventListener("resize", fitBoard);
