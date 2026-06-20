@@ -201,12 +201,19 @@ async function setFrame(page, position) {
 
       document.getAnimations({ subtree: true }).forEach((animation) => {
         const timing = animation.effect?.getTiming?.();
-        const isOneShot = timing && Number.isFinite(timing.duration) && timing.iterations === 1;
-        const isWipe = isOneShot && Math.abs(timing.duration - wipeDuration) < 5;
+        const duration = Number(timing?.duration);
+        const iterations = Number(timing?.iterations);
+        const isFiniteDuration = Number.isFinite(duration) && duration >= 0;
+        const isOneShot = isFiniteDuration && iterations === 1;
+        const isWipe = isOneShot && Math.abs(duration - wipeDuration) < 5;
+        const fallbackTime = Number.isFinite(animationTime) ? animationTime : 0;
+        const segmentTime = Number.isFinite(segment.segmentTime) ? segment.segmentTime : 0;
+        const targetTime = isOneShot
+          ? Math.min(isWipe ? wipeTime : segmentTime, duration)
+          : fallbackTime;
+
         animation.pause();
-        animation.currentTime = isOneShot
-          ? Math.min(isWipe ? wipeTime : segment.segmentTime, timing.duration)
-          : animationTime;
+        animation.currentTime = Number.isFinite(targetTime) ? Math.max(targetTime, 0) : 0;
       });
     },
     position,
@@ -249,7 +256,9 @@ async function main() {
     const durationMs = timeline.reduce((sum, segment) => sum + segment.duration, 0);
     const fullFrameCount = Math.ceil((durationMs / 1000) * fps);
     const testFrameLimit = Number.parseInt(process.env.VIDEO_TEST_FRAMES || "", 10);
-    const frameCount = Number.isFinite(testFrameLimit) && testFrameLimit > 0 ? Math.min(fullFrameCount, testFrameLimit) : fullFrameCount;
+    const testFrameStart = Number.parseInt(process.env.VIDEO_TEST_START || "", 10);
+    const startFrame = Number.isFinite(testFrameStart) && testFrameStart > 0 ? Math.min(testFrameStart, fullFrameCount - 1) : 0;
+    const frameCount = Number.isFinite(testFrameLimit) && testFrameLimit > 0 ? Math.min(fullFrameCount - startFrame, testFrameLimit) : fullFrameCount - startFrame;
     const outputPath = path.join(outputDir, `painel-recordes-${timestamp()}.mp4`);
 
     console.log(`Salas ativas: ${activeRecords.length}`);
@@ -259,9 +268,10 @@ async function main() {
     console.log(describeTimeline(timeline));
     console.log("Renderizando frames...");
 
-    for (let frameIndex = 0; frameIndex < frameCount; frameIndex += 1) {
+    for (let renderedFrameIndex = 0; renderedFrameIndex < frameCount; renderedFrameIndex += 1) {
+      const frameIndex = startFrame + renderedFrameIndex;
       const timeMs = frameIndex * (1000 / fps);
-      const framePath = path.join(tempDir, `frame_${String(frameIndex + 1).padStart(6, "0")}.jpg`);
+      const framePath = path.join(tempDir, `frame_${String(renderedFrameIndex + 1).padStart(6, "0")}.jpg`);
       const position = timelinePosition(timeline, timeMs);
       await setFrame(page, {
         segment: position.segment,
@@ -271,8 +281,8 @@ async function main() {
       });
       await page.screenshot({ path: framePath, type: "jpeg", quality: 92, fullPage: false });
 
-      if (frameIndex === 0 || (frameIndex + 1) % fps === 0 || frameIndex + 1 === frameCount) {
-        const percent = Math.round(((frameIndex + 1) / frameCount) * 100);
+      if (renderedFrameIndex === 0 || (renderedFrameIndex + 1) % fps === 0 || renderedFrameIndex + 1 === frameCount) {
+        const percent = Math.round(((renderedFrameIndex + 1) / frameCount) * 100);
         process.stdout.write(`\r${percent}%`);
       }
     }
