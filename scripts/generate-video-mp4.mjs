@@ -125,6 +125,10 @@ async function preparePage(page) {
       body { margin: 0 !important; }
       .fit-shell { width: ${width}px !important; height: ${height}px !important; }
       .frame { transform: scale(2.4) !important; transform-origin: 0 0 !important; }
+      .header, .podium-mark, .entries, .photo-view, .photo-image, .screen-wipe {
+        transition: none !important;
+        animation: none !important;
+      }
       .fullscreen-button { display: none !important; }
     `,
   });
@@ -188,32 +192,65 @@ function validateTimeline(timeline) {
 
 async function setFrame(page, position) {
   await page.evaluate(
-    ({ segment, animationTime, transitionDuration: wipeDuration }) => {
+    ({ segment, animationTime }) => {
       const frame = document.querySelector(".frame");
-      const showPhoto = segment.type === "photo" || segment.type === "to-list";
-      const isWiping = segment.type === "to-photo" || segment.type === "to-list";
-      const wipeTime = isWiping ? segment.segmentTime : 0;
+      const listItems = [
+        document.querySelector(".header"),
+        document.querySelector(".podium-mark"),
+        document.querySelector(".entries"),
+      ].filter(Boolean);
+      const photoView = document.querySelector(".photo-view");
+      const photoImage = document.querySelector(".photo-image");
+      const screenWipe = document.querySelector(".screen-wipe");
+      const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+      const easeOut = (value) => 1 - Math.pow(1 - clamp(value), 3);
+      const easeInOut = (value) => {
+        const t = clamp(value);
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      };
+      const transitionProgress = clamp(segment.segmentTime / Math.max(segment.duration, 1));
+      const toPhotoProgress = segment.type === "to-photo" ? easeOut(transitionProgress) : segment.type === "photo" || segment.type === "to-list" ? 1 : 0;
+      const photoProgress = segment.type === "to-list" ? 1 - easeOut(transitionProgress) : toPhotoProgress;
+      const listProgress = segment.type === "to-photo" ? 1 - easeOut(transitionProgress) : segment.type === "photo" || segment.type === "to-list" ? 0 : 1;
+      const wipeProgress = segment.type === "to-photo" || segment.type === "to-list" ? easeInOut(transitionProgress) : 0;
 
       window.clearTimeout(cycleTimer);
       if (typeof setPhotoRecord === "function") setPhotoRecord(segment.record);
-      frame.classList.toggle("show-photo", showPhoto);
-      frame.classList.toggle("is-wiping", isWiping);
+      frame.classList.remove("show-photo", "is-wiping");
+
+      listItems.forEach((element) => {
+        element.style.opacity = String(listProgress);
+        element.style.transform = `translateY(${(1 - listProgress) * -12}px) scale(${1 - (1 - listProgress) * 0.02})`;
+        element.style.filter = `blur(${(1 - listProgress) * 3}px)`;
+      });
+
+      if (photoView) {
+        photoView.style.opacity = String(photoProgress);
+        photoView.style.clipPath = `inset(0 ${100 - photoProgress * 100}% 0 0)`;
+      }
+
+      if (photoImage) {
+        const imageProgress = segment.type === "photo"
+          ? clamp(segment.segmentTime / 5000)
+          : photoProgress;
+        photoImage.style.transform = `scale(${1.04 - imageProgress * 0.04})`;
+      }
+
+      if (screenWipe) {
+        if (segment.type === "to-photo" || segment.type === "to-list") {
+          screenWipe.style.opacity = wipeProgress < 0.5 ? wipeProgress * 2 : (1 - wipeProgress) * 2;
+          screenWipe.style.transform = `translateX(${-120 + wipeProgress * 240}%)`;
+        } else {
+          screenWipe.style.opacity = "0";
+          screenWipe.style.transform = "translateX(-120%)";
+        }
+      }
 
       document.getAnimations({ subtree: true }).forEach((animation) => {
-        const timing = animation.effect?.getTiming?.();
-        const duration = Number(timing?.duration);
-        const iterations = Number(timing?.iterations);
-        const isFiniteDuration = Number.isFinite(duration) && duration >= 0;
-        const isOneShot = isFiniteDuration && iterations === 1;
-        const isWipe = isOneShot && Math.abs(duration - wipeDuration) < 5;
         const fallbackTime = Number.isFinite(animationTime) ? animationTime : 0;
-        const segmentTime = Number.isFinite(segment.segmentTime) ? segment.segmentTime : 0;
-        const targetTime = isOneShot
-          ? Math.min(isWipe ? wipeTime : segmentTime, duration)
-          : fallbackTime;
 
         animation.pause();
-        animation.currentTime = Number.isFinite(targetTime) ? Math.max(targetTime, 0) : 0;
+        animation.currentTime = Math.max(fallbackTime, 0);
       });
     },
     position,
@@ -277,7 +314,6 @@ async function main() {
         segment: position.segment,
         segmentTime: position.segmentTime,
         animationTime: timeMs,
-        transitionDuration,
       });
       await page.screenshot({ path: framePath, type: "jpeg", quality: 92, fullPage: false });
 
