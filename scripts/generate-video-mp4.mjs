@@ -18,7 +18,6 @@ const fps = 30;
 const boardDuration = 11000;
 const photoDuration = 6000;
 const transitionDuration = 1150;
-const transitionLead = transitionDuration * 0.45;
 
 const mimeTypes = new Map([
   [".html", "text/html; charset=utf-8"],
@@ -142,14 +141,11 @@ async function preparePage(page) {
 
 function buildTimeline(activeRecords) {
   return activeRecords.flatMap((record) => {
-    const listHold = Math.max(boardDuration - transitionLead, 0);
-    const photoHold = Math.max(photoDuration - transitionLead, 0);
-
     return [
-      { type: "list", duration: listHold, record },
-      { type: "to-photo", duration: transitionLead, record },
-      { type: "photo", duration: photoHold, record },
-      { type: "to-list", duration: transitionLead, record },
+      { type: "list", duration: boardDuration, record },
+      { type: "to-photo", duration: transitionDuration, record },
+      { type: "photo", duration: photoDuration, record },
+      { type: "to-list", duration: transitionDuration, record },
     ];
   });
 }
@@ -192,7 +188,7 @@ function validateTimeline(timeline) {
 
 async function setFrame(page, position) {
   await page.evaluate(
-    ({ segment, animationTime }) => {
+    ({ segment, segmentTime, animationTime }) => {
       const frame = document.querySelector(".frame");
       const listItems = [
         document.querySelector(".header"),
@@ -208,10 +204,19 @@ async function setFrame(page, position) {
         const t = clamp(value);
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       };
-      const transitionProgress = clamp(segment.segmentTime / Math.max(segment.duration, 1));
-      const toPhotoProgress = segment.type === "to-photo" ? easeOut(transitionProgress) : segment.type === "photo" || segment.type === "to-list" ? 1 : 0;
-      const photoProgress = segment.type === "to-list" ? 1 - easeOut(transitionProgress) : toPhotoProgress;
-      const listProgress = segment.type === "to-photo" ? 1 - easeOut(transitionProgress) : segment.type === "photo" || segment.type === "to-list" ? 0 : 1;
+      const safeSegmentTime = Number.isFinite(segmentTime) ? segmentTime : 0;
+      const transitionProgress = clamp(safeSegmentTime / Math.max(segment.duration, 1));
+      const transitionEase = easeOut(transitionProgress);
+      const photoProgress =
+        segment.type === "to-photo" ? transitionEase :
+        segment.type === "photo" ? 1 :
+        segment.type === "to-list" ? 1 - transitionEase :
+        0;
+      const listProgress =
+        segment.type === "to-photo" ? 1 - transitionEase :
+        segment.type === "photo" ? 0 :
+        segment.type === "to-list" ? transitionEase :
+        1;
       const wipeProgress = segment.type === "to-photo" || segment.type === "to-list" ? easeInOut(transitionProgress) : 0;
 
       window.clearTimeout(cycleTimer);
@@ -231,7 +236,7 @@ async function setFrame(page, position) {
 
       if (photoImage) {
         const imageProgress = segment.type === "photo"
-          ? clamp(segment.segmentTime / 5000)
+          ? clamp(safeSegmentTime / 5000)
           : photoProgress;
         photoImage.style.transform = `scale(${1.04 - imageProgress * 0.04})`;
       }
