@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const recordsPath = path.join(rootDir, "records.xml");
+const configPath = path.join(rootDir, "config.xml");
 const photosDir = path.join(rootDir, "fotos");
 const generatorPath = path.join(__dirname, "generate-video-mp4.mjs");
 const photoExtensions = [".jpeg", ".png", ".jpg", ".webp"];
@@ -72,6 +73,45 @@ async function loadRecords() {
   return { xml, records: parseRecords(xml) };
 }
 
+async function loadConfigXml() {
+  return readFile(configPath, "utf8");
+}
+
+function currentListDesignNumber(configXml) {
+  return configXml.match(/<config>[\s\S]*?<design\b[^>]*\bnumero="([^"]+)"/)?.[1] || "1";
+}
+
+function currentPhotoDesignNumber(configXml) {
+  return configXml.match(/<foto>[\s\S]*?<design\b[^>]*\bnumero="([^"]+)"/)?.[1] || "1";
+}
+
+function updateListDesignXml(configXml, designNumber) {
+  return configXml.replace(
+    /(<config>[\s\S]*?<design\b[^>]*\bnumero=")([^"]+)(")/,
+    `$1${designNumber}$3`,
+  );
+}
+
+function updatePhotoDesignXml(configXml, designNumber) {
+  return configXml.replace(
+    /(<foto>[\s\S]*?<design\b[^>]*\bnumero=")([^"]+)(")/,
+    `$1${designNumber}$3`,
+  );
+}
+
+async function listDesignOptions(kind) {
+  const files = await readdir(rootDir);
+  const pattern = kind === "list" ? /^design-(\d+)\.html$/i : /^photo-design-(\d+)\.html$/i;
+  return files
+    .map((fileName) => {
+      const match = fileName.match(pattern);
+      if (!match) return null;
+      return { number: match[1], fileName };
+    })
+    .filter(Boolean)
+    .sort((a, b) => Number(a.number) - Number(b.number));
+}
+
 function printMenu(records) {
   console.clear();
   console.log("GERENCIADOR DE VIDEO - PAINEL DE RECORDES");
@@ -80,6 +120,8 @@ function printMenu(records) {
     console.log(`${record.id}. ${record.room} | ${record.team} | ${record.time}`);
   }
   console.log("");
+  console.log("A. Alterar design do quadro de recordes (lista)");
+  console.log("B. Alterar design do quadro de foto");
   console.log("8. Gerar video 1080x1920");
   console.log("9. Gerar video 1920x1080 (retrato girado 90 graus sentido horario)");
   console.log("0. Fechar");
@@ -197,6 +239,51 @@ async function editRecord(id) {
   await rl.question("Pressione Enter para voltar ao menu...");
 }
 
+async function changeDesign(kind) {
+  const configXml = await loadConfigXml();
+  const options = await listDesignOptions(kind);
+  const currentNumber = kind === "list" ? currentListDesignNumber(configXml) : currentPhotoDesignNumber(configXml);
+  const title = kind === "list" ? "quadro de recordes (lista)" : "quadro de foto";
+
+  console.log("");
+  console.log(`Alterar design do ${title}`);
+  console.log(`Atual: ${currentNumber}`);
+  console.log("");
+
+  if (!options.length) {
+    console.log("Nenhum arquivo de design encontrado.");
+    await rl.question("Pressione Enter para voltar ao menu...");
+    return;
+  }
+
+  for (const option of options) {
+    const marker = option.number === currentNumber ? " (atual)" : "";
+    console.log(`${option.number}. ${option.fileName}${marker}`);
+  }
+  console.log("");
+
+  const selected = (await rl.question("Escolha um design ou Enter para manter o atual: ")).trim();
+  if (!selected) {
+    console.log("Design atual mantido.");
+    await rl.question("Pressione Enter para voltar ao menu...");
+    return;
+  }
+
+  const selectedOption = options.find((option) => option.number === selected);
+  if (!selectedOption) {
+    console.log("Opcao invalida. Design atual mantido.");
+    await rl.question("Pressione Enter para voltar ao menu...");
+    return;
+  }
+
+  const nextConfigXml = kind === "list"
+    ? updateListDesignXml(configXml, selectedOption.number)
+    : updatePhotoDesignXml(configXml, selectedOption.number);
+  await writeFile(configPath, nextConfigXml, "utf8");
+  console.log(`Design alterado para ${selectedOption.fileName}.`);
+  await rl.question("Pressione Enter para voltar ao menu...");
+}
+
 async function generateVideo(args = []) {
   console.log("");
   await new Promise((resolve, reject) => {
@@ -219,10 +306,19 @@ async function main() {
     const { records } = await loadRecords();
     printMenu(records);
     const option = (await rl.question("Escolha uma opcao: ")).trim();
+    const normalizedOption = option.toLowerCase();
 
     if (option === "0") break;
     if (/^[1-7]$/.test(option)) {
       await editRecord(option);
+      continue;
+    }
+    if (normalizedOption === "a") {
+      await changeDesign("list");
+      continue;
+    }
+    if (normalizedOption === "b") {
+      await changeDesign("photo");
       continue;
     }
     if (option === "8") {

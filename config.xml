@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
   <salas quantidade="7" />
-  <design numero="2" />
+  <design numero="1" />
   <topo>
     <floatIndividual>1</floatIndividual>
     <forcaFloat>1.0</forcaFloat>
@@ -21,7 +21,7 @@
     <velocidadeWaveBrilho>1.0</velocidadeWaveBrilho>
   </lista>
   <foto>
-    <design numero="3" />
+    <design numero="2" />
     <floatIndividual>1</floatIndividual>
     <forcaFloat>1.0</forcaFloat>
     <velocidadeFloat>1.0</velocidadeFloat>
