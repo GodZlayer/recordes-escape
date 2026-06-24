@@ -13,6 +13,7 @@ const configPath = path.join(rootDir, "config.xml");
 const photosDir = path.join(rootDir, "fotos");
 const logosDir = path.join(rootDir, "salaslogos");
 const generatorPath = path.join(__dirname, "generate-video-mp4.mjs");
+const vectorizerPath = path.join(__dirname, "vectorize-png-to-svg.mjs");
 const photoExtensions = [".jpeg", ".png", ".jpg", ".webp"];
 
 const rl = readline.createInterface({ input, output });
@@ -173,30 +174,23 @@ async function openImagePicker({
   });
 }
 
-function pngSize(buffer) {
-  const signature = "89504e470d0a1a0a";
-  if (buffer.subarray(0, 8).toString("hex") !== signature || buffer.subarray(12, 16).toString("ascii") !== "IHDR") {
-    throw new Error("PNG invalido.");
-  }
-
-  return {
-    width: buffer.readUInt32BE(16),
-    height: buffer.readUInt32BE(20),
-  };
-}
-
 async function writePngAsSvg(sourcePath, targetPath) {
-  const png = await readFile(sourcePath);
-  const { width, height } = pngSize(png);
-  const data = png.toString("base64");
-  const svg = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" version="1.1">`,
-    `  <image width="${width}" height="${height}" href="data:image/png;base64,${data}"/>`,
-    "</svg>",
-    "",
-  ].join("\n");
+  await new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [vectorizerPath, sourcePath, targetPath], {
+      cwd: rootDir,
+      stdio: ["ignore", "ignore", "pipe"],
+    });
 
-  await writeFile(targetPath, svg, "utf8");
+    let stderr = "";
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(stderr.trim() || `Conversor SVG finalizou com codigo ${code}.`));
+    });
+  });
 }
 
 async function replacePhoto(id) {
