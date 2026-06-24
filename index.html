@@ -2060,26 +2060,6 @@
         { id: "6", room: "", team: "", time: "", style: "script" },
         { id: "7", room: "", team: "", time: "", style: "script" },
       ];
-      const roomLogoById = {
-        1: "salaslogos/Emboscada.svg",
-        2: "salaslogos/Charada.svg",
-        3: "salaslogos/MundoInvertido.svg",
-        4: "salaslogos/MaldicaoPirata.svg",
-        5: "salaslogos/TVirus.svg",
-        6: "salaslogos/Wandinha.svg",
-        7: "salaslogos/Excalibur.svg",
-      };
-      const roomLogoByName = {
-        emboscada: roomLogoById[1],
-        charada: roomLogoById[2],
-        cavaleirodastrevas: roomLogoById[2],
-        mundoinvertido: roomLogoById[3],
-        amaldicaopirata: roomLogoById[4],
-        maldicaopirata: roomLogoById[4],
-        tvirus: roomLogoById[5],
-        wandinha: roomLogoById[6],
-        excalibur: roomLogoById[7],
-      };
       let activePhotoRecords = [];
       let photoIndex = 0;
       let cycleTimer = 0;
@@ -2233,17 +2213,10 @@
         });
       }
 
-      function normalizeRoomKey(value) {
-        return (value || "")
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .toLowerCase()
-          .replace(/[^a-z0-9]/g, "");
-      }
-
       function logoPathForRecord(record) {
         const id = Number.parseInt(record.id, 10);
-        return roomLogoById[id] || roomLogoByName[normalizeRoomKey(record.room)] || "";
+        if (!Number.isInteger(id) || id < 1) return "";
+        return `salaslogos/${id}.svg`;
       }
 
       async function fetchTextFile(path) {
