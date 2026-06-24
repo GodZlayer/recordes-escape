@@ -27,16 +27,16 @@ if not exist "node_modules\playwright-core\package.json" (
   )
 )
 
-node "%~dp0scripts\generate-video-mp4.mjs"
+node "%~dp0scripts\video-manager.mjs"
 set EXIT_CODE=%ERRORLEVEL%
 
 if not "%EXIT_CODE%"=="0" (
   echo.
-  echo Falha ao gerar o video.
+  echo O gerenciador foi encerrado com erro.
   pause
   exit /b %EXIT_CODE%
 )
 
 echo.
-echo Video gerado com sucesso.
+echo Gerenciador encerrado.
 pause

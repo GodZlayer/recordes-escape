@@ -12,8 +12,11 @@ const rootDir = path.resolve(__dirname, "..");
 const outputDir = path.join(rootDir, "videos");
 const tempDir = path.join(rootDir, "temp", `frames-${Date.now()}`);
 
-const width = 1080;
-const height = 1920;
+const renderWidth = 1080;
+const renderHeight = 1920;
+const rotateClockwise = process.argv.includes("--rotate-clockwise-landscape");
+const outputWidth = rotateClockwise ? 1920 : renderWidth;
+const outputHeight = rotateClockwise ? 1080 : renderHeight;
 const fps = 30;
 const boardDuration = 11000;
 const photoDuration = 6000;
@@ -120,9 +123,9 @@ async function preparePage(page) {
   await page.addStyleTag({
     content: `
       :root { --art-scale: 2.4 !important; }
-      html, body { width: ${width}px !important; height: ${height}px !important; overflow: hidden !important; }
+      html, body { width: ${renderWidth}px !important; height: ${renderHeight}px !important; overflow: hidden !important; }
       body { margin: 0 !important; }
-      .fit-shell { width: ${width}px !important; height: ${height}px !important; }
+      .fit-shell { width: ${renderWidth}px !important; height: ${renderHeight}px !important; }
       .frame { transform: scale(2.4) !important; transform-origin: 0 0 !important; }
       .header, .podium-mark, .entries, .photo-view, .photo-image, .screen-wipe {
         transition: none !important;
@@ -284,7 +287,7 @@ async function main() {
   });
 
   try {
-    const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+    const page = await browser.newPage({ viewport: { width: renderWidth, height: renderHeight }, deviceScaleFactor: 1 });
     await page.goto(url, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts?.ready);
     await page.waitForSelector("#entries article", { timeout: 15000 });
@@ -301,11 +304,12 @@ async function main() {
     const testFrameStart = Number.parseInt(process.env.VIDEO_TEST_START || "", 10);
     const startFrame = Number.isFinite(testFrameStart) && testFrameStart > 0 ? Math.min(testFrameStart, fullFrameCount - 1) : 0;
     const frameCount = Number.isFinite(testFrameLimit) && testFrameLimit > 0 ? Math.min(fullFrameCount - startFrame, testFrameLimit) : fullFrameCount - startFrame;
-    const outputPath = path.join(outputDir, `painel-recordes-${timestamp()}.mp4`);
+    const outputSuffix = rotateClockwise ? "1920x1080-girado" : "1080x1920";
+    const outputPath = path.join(outputDir, `painel-recordes-${outputSuffix}-${timestamp()}.mp4`);
 
     console.log(`Salas ativas: ${activeRecords.length}`);
     console.log(`Duracao final: ${(durationMs / 1000).toFixed(2)}s`);
-    console.log(`Frames: ${frameCount}${frameCount !== fullFrameCount ? ` de ${fullFrameCount}` : ""} (${fps} fps, ${width}x${height})`);
+    console.log(`Frames: ${frameCount}${frameCount !== fullFrameCount ? ` de ${fullFrameCount}` : ""} (${fps} fps, ${outputWidth}x${outputHeight})`);
     console.log("Ordem da timeline:");
     console.log(describeTimeline(timeline));
     console.log("Renderizando frames...");
@@ -329,17 +333,23 @@ async function main() {
     }
 
     console.log("\nMontando MP4 com FFmpeg...");
-    await run("ffmpeg", [
+    const ffmpegArgs = [
       "-y",
       "-framerate", String(fps),
       "-i", path.join(tempDir, "frame_%06d.jpg"),
       "-c:v", "libx264",
       "-preset", "slow",
       "-crf", "18",
+    ];
+    if (rotateClockwise) {
+      ffmpegArgs.push("-vf", "transpose=1");
+    }
+    ffmpegArgs.push(
       "-pix_fmt", "yuv420p",
       "-movflags", "+faststart",
       outputPath,
-    ]);
+    );
+    await run("ffmpeg", ffmpegArgs);
 
     console.log(`\nArquivo final: ${outputPath}`);
     await rm(tempDir, { recursive: true, force: true });

@@ -2334,7 +2334,7 @@
         const time = document.querySelector("#photo-time");
         const logo = document.querySelector("#photo-room-logo");
         const id = Number.parseInt(record.id, 10);
-        const candidates = [`fotos/${id}.jpeg`, `fotos/${id}.png`, `fotos/${id}.jpg`];
+        const candidates = [`fotos/${id}.jpeg`, `fotos/${id}.png`, `fotos/${id}.jpg`, `fotos/${id}.webp`];
         let candidateIndex = 0;
         photo.onerror = () => {
           candidateIndex += 1;
