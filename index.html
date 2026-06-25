@@ -1318,34 +1318,35 @@
         transform: translateZ(0);
       }
 
+      html.low-power .frame,
+      html.low-power .board,
+      html.low-power .tape,
+      html.low-power .photo-tape,
+      html.low-power .photo-2-logo,
+      html.low-power .photo-2-room,
+      html.low-power .photo-2-record,
+      html.low-power .photo-3-badge,
+      html.low-power .photo-3-room,
+      html.low-power .photo-3-record {
+        box-shadow: none !important;
+      }
+
       html.low-power .frame::before,
       html.low-power .board::before,
       html.low-power .board::after,
       html.low-power .photo-view::after,
       html.low-power .header .ray,
-      html.low-power .photo-3-rays {
-        animation: none !important;
+      html.low-power .photo-3-scene,
+      html.low-power .screen-wipe {
+        display: none !important;
       }
 
+      html.low-power .header .ray,
+      html.low-power .photo-tape,
       html.low-power .chalk-text,
-      html.low-power .icon-label {
-        animation-duration: 6.5s !important;
-      }
-
-      html.low-power .photo-3-rings circle {
-        animation-duration: 4.8s !important;
-        animation-timing-function: steps(12, end) !important;
-      }
-
-      html.low-power .photo-3-confetti rect {
-        animation-duration: 5.6s !important;
-        animation-timing-function: steps(18, end) !important;
-      }
-
-      html.low-power .photo-3-sparkles path,
-      html.low-power .photo-3-sparkles polygon {
-        animation-duration: 3.6s !important;
-        animation-timing-function: steps(10, end) !important;
+      html.low-power .icon-label,
+      html.low-power .photo-3-scene * {
+        animation: none !important;
       }
 
       html.low-power .frame[data-photo-design="3"] .photo-image {
@@ -1372,6 +1373,47 @@
       html.low-power .photo-3-team,
       html.low-power .photo-3-time {
         filter: none !important;
+      }
+
+      html.low-power .chalk-text,
+      html.low-power .photo-title,
+      html.low-power .photo-room-label,
+      html.low-power .photo-2-title,
+      html.low-power .photo-2-team,
+      html.low-power .photo-2-time,
+      html.low-power .photo-3-title,
+      html.low-power .photo-3-team,
+      html.low-power .photo-3-time {
+        text-shadow: none !important;
+      }
+
+      html.low-power .frame,
+      html.low-power .board,
+      html.low-power .tape,
+      html.low-power .photo-tape,
+      html.low-power .photo-design-3,
+      html.low-power .photo-3-room,
+      html.low-power .photo-3-record,
+      html.low-power .frame[data-photo-design="3"] .photo-view,
+      html.low-power .frame[data-photo-design="3"] .photo-view::before {
+        background-image: none !important;
+      }
+
+      html.low-power .frame {
+        background: #d8a566 !important;
+      }
+
+      html.low-power .board,
+      html.low-power .frame[data-photo-design="3"] .photo-view,
+      html.low-power .photo-design-3 {
+        background-color: #202427 !important;
+      }
+
+      html.low-power .tape,
+      html.low-power .photo-tape,
+      html.low-power .photo-3-room,
+      html.low-power .photo-3-record {
+        background-color: rgba(8, 10, 12, 0.86) !important;
       }
 
       html.low-power .header,
@@ -2410,6 +2452,18 @@
         return `salaslogos/${id}.svg`;
       }
 
+      function pauseInlineSvgAnimations(container) {
+        if (!lowPowerMode || !container) return;
+        container.querySelectorAll("svg").forEach((svg) => {
+          if (typeof svg.pauseAnimations === "function") {
+            svg.pauseAnimations();
+          }
+        });
+        container.querySelectorAll("animate, animateTransform, animateMotion, set").forEach((element) => {
+          element.remove();
+        });
+      }
+
       async function fetchTextFile(path) {
         const url = new URL(path, window.location.href);
         url.searchParams.set("v", Date.now().toString());
@@ -2444,6 +2498,7 @@
           }
         }
         header.innerHTML = `<div class="top-brightness">${designHtml}</div>`;
+        pauseInlineSvgAnimations(header);
       }
 
       async function loadPhotoDesign(designNumber) {
@@ -2462,6 +2517,7 @@
           }
         }
         design.innerHTML = designHtml;
+        pauseInlineSvgAnimations(design);
       }
 
       function renderRecords(records, roomCount) {
