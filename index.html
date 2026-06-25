@@ -10,6 +10,18 @@
       href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Caveat+Brush&family=Kalam:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const mode = (params.get("modo") || params.get("mode") || "").toLowerCase();
+        const platform = `${navigator.platform || ""} ${navigator.userAgent || ""}`.toLowerCase();
+        const cores = navigator.hardwareConcurrency || 0;
+        const forcedLight = ["leve", "light", "low", "low-power", "pi"].includes(mode);
+        const forcedFull = ["completo", "full", "normal"].includes(mode);
+        const likelyPi = /arm|aarch|raspbian|raspberry|linux arm/.test(platform) || (cores > 0 && cores <= 4 && /linux/.test(platform));
+        document.documentElement.classList.toggle("low-power", forcedLight || (!forcedFull && likelyPi));
+      })();
+    </script>
     <style>
       :root {
         --art-width: 450px;
@@ -1261,6 +1273,70 @@
         border: 0;
       }
 
+      html.low-power .frame,
+      html.low-power .board,
+      html.low-power .photo-view {
+        transform: translateZ(0);
+      }
+
+      html.low-power .frame *,
+      html.low-power .frame::before,
+      html.low-power .board::before,
+      html.low-power .board::after,
+      html.low-power .photo-view::after {
+        animation: none !important;
+      }
+
+      html.low-power .header text,
+      html.low-power .header path,
+      html.low-power .header line,
+      html.low-power .header circle,
+      html.low-power .rank,
+      html.low-power .icon-label,
+      html.low-power .top-brightness,
+      html.low-power .entry-brightness,
+      html.low-power .photo-brightness,
+      html.low-power .photo-3-record-label,
+      html.low-power .photo-3-room-name,
+      html.low-power .photo-3-team,
+      html.low-power .photo-3-time {
+        filter: none !important;
+      }
+
+      html.low-power .header,
+      html.low-power .entries,
+      html.low-power .photo-view,
+      html.low-power .photo-image {
+        transition: opacity 0.28s ease !important;
+      }
+
+      html.low-power .frame.show-photo .header,
+      html.low-power .frame.show-photo .podium-mark,
+      html.low-power .frame.show-photo .entries {
+        opacity: 0;
+        transform: none;
+        filter: none;
+      }
+
+      html.low-power .photo-view {
+        clip-path: none;
+        visibility: hidden;
+      }
+
+      html.low-power .frame.show-photo .photo-view {
+        visibility: visible;
+      }
+
+      html.low-power .photo-view::after,
+      html.low-power .screen-wipe {
+        display: none;
+      }
+
+      html.low-power .photo-image,
+      html.low-power .frame.show-photo .photo-image {
+        transform: none;
+      }
+
       @keyframes wood-light {
         0%,
         100% {
@@ -1863,7 +1939,7 @@
           </template>
           <section id="entries" class="entries" aria-label="Lista de recordes"></section>
           <section class="photo-view" aria-live="polite" aria-label="Foto da equipe recordista">
-            <img id="record-photo" class="photo-image" alt="" />
+            <img id="record-photo" class="photo-image" decoding="async" alt="" />
             <div id="photo-design" class="photo-design"></div>
             <template id="photo-design-fallback">
               <div class="photo-float-shell">
@@ -2040,6 +2116,7 @@
       const boardDuration = 11000;
       const photoDuration = 6000;
       const transitionDuration = 1150;
+      const lowPowerMode = detectLowPowerMode();
       const fallbackConfig = {
         roomCount: 7,
         designNumber: 2,
@@ -2063,6 +2140,21 @@
       let activePhotoRecords = [];
       let photoIndex = 0;
       let cycleTimer = 0;
+
+      function detectLowPowerMode() {
+        const params = new URLSearchParams(window.location.search);
+        const mode = (params.get("modo") || params.get("mode") || "").toLowerCase();
+        if (["leve", "light", "low", "low-power", "pi"].includes(mode)) return true;
+        if (["completo", "full", "normal"].includes(mode)) return false;
+
+        const platform = `${navigator.platform || ""} ${navigator.userAgent || ""}`.toLowerCase();
+        const cores = navigator.hardwareConcurrency || 0;
+        return /arm|aarch|raspbian|raspberry|linux arm/.test(platform) || (cores > 0 && cores <= 4 && /linux/.test(platform));
+      }
+
+      function applyLowPowerMode() {
+        document.documentElement.classList.toggle("low-power", lowPowerMode);
+      }
 
       function fitBoard() {
         const viewport = window.visualViewport || window;
@@ -2173,15 +2265,24 @@
       function applyConfig(config) {
         const frame = document.querySelector(".frame");
         frame.dataset.photoDesign = config.photoDesignNumber.toString();
-        frame.dataset.topFloat = config.topFloat.mode.toString();
-        frame.dataset.listFloat = config.listFloat.mode.toString();
-        frame.dataset.photoFloat = config.photoFloat.mode.toString();
-        frame.dataset.topBright = config.topBrightness.active.toString();
+        frame.dataset.topFloat = lowPowerMode ? "0" : config.topFloat.mode.toString();
+        frame.dataset.listFloat = lowPowerMode ? "0" : config.listFloat.mode.toString();
+        frame.dataset.photoFloat = lowPowerMode ? "0" : config.photoFloat.mode.toString();
+        frame.dataset.topBright = lowPowerMode ? "0" : config.topBrightness.active.toString();
         frame.dataset.topBrightType = config.topBrightness.type.toString();
-        frame.dataset.listBright = config.listBrightness.active.toString();
+        frame.dataset.listBright = lowPowerMode ? "0" : config.listBrightness.active.toString();
         frame.dataset.listBrightType = config.listBrightness.type.toString();
-        frame.dataset.photoBright = config.photoBrightness.active.toString();
+        frame.dataset.photoBright = lowPowerMode ? "0" : config.photoBrightness.active.toString();
         frame.dataset.photoBrightType = config.photoBrightness.type.toString();
+        if (lowPowerMode) {
+          setFloatVariables("top", { ...config.topFloat, strength: 0, speed: 0 }, 4, 4.8);
+          setFloatVariables("list", { ...config.listFloat, strength: 0, speed: 0 }, 2, 5.2);
+          setFloatVariables("photo", { ...config.photoFloat, strength: 0, speed: 0 }, 4, 5.2);
+          setBrightnessVariables("top", { ...config.topBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
+          setBrightnessVariables("list", { ...config.listBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
+          setBrightnessVariables("photo", { ...config.photoBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
+          return;
+        }
         setFloatVariables("top", config.topFloat, 4, 4.8);
         setFloatVariables("list", config.listFloat, 2, 5.2);
         setFloatVariables("photo", config.photoFloat, 4, 5.2);
@@ -2334,6 +2435,7 @@
       }
 
       function runWipe() {
+        if (lowPowerMode) return;
         const frame = document.querySelector(".frame");
         frame.classList.remove("is-wiping");
         void frame.offsetWidth;
@@ -2346,7 +2448,7 @@
         window.setTimeout(() => {
           frame.classList.remove("show-photo");
           schedulePhotoCycle(boardDuration);
-        }, transitionDuration * 0.45);
+        }, lowPowerMode ? 80 : transitionDuration * 0.45);
       }
 
       function showNextPhoto() {
@@ -2358,7 +2460,7 @@
         window.setTimeout(() => {
           frame.classList.add("show-photo");
           cycleTimer = window.setTimeout(showBoard, photoDuration);
-        }, transitionDuration * 0.45);
+        }, lowPowerMode ? 80 : transitionDuration * 0.45);
       }
 
       function schedulePhotoCycle(delay) {
@@ -2426,6 +2528,7 @@
         }
       }
 
+      applyLowPowerMode();
       fitBoard();
       loadRecords();
       setupFullscreenButton();
