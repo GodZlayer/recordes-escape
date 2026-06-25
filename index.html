@@ -1273,18 +1273,39 @@
         border: 0;
       }
 
-      html.low-power .frame,
+      html.low-power .frame {
+        transform: scale(var(--art-scale)) translateZ(0);
+      }
+
+      html.low-power body {
+        height: 100dvh;
+        min-height: 100dvh;
+      }
+
+      html.low-power .fit-shell {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
       html.low-power .board,
       html.low-power .photo-view {
         transform: translateZ(0);
       }
 
-      html.low-power .frame *,
       html.low-power .frame::before,
       html.low-power .board::before,
       html.low-power .board::after,
-      html.low-power .photo-view::after {
+      html.low-power .photo-view::after,
+      html.low-power .header .ray,
+      html.low-power .photo-3-rays {
         animation: none !important;
+      }
+
+      html.low-power .chalk-text,
+      html.low-power .icon-label {
+        animation-duration: 6.5s !important;
       }
 
       html.low-power .header text,
@@ -1296,6 +1317,12 @@
       html.low-power .top-brightness,
       html.low-power .entry-brightness,
       html.low-power .photo-brightness,
+      html.low-power .photo-3-rays,
+      html.low-power .photo-3-rings,
+      html.low-power .photo-3-confetti,
+      html.low-power .photo-3-sparkles,
+      html.low-power .photo-3-badge,
+      html.low-power .photo-3-record,
       html.low-power .photo-3-record-label,
       html.low-power .photo-3-room-name,
       html.low-power .photo-3-team,
@@ -2117,6 +2144,7 @@
       const photoDuration = 6000;
       const transitionDuration = 1150;
       const lowPowerMode = detectLowPowerMode();
+      const fillScreenMode = detectFillScreenMode();
       const fallbackConfig = {
         roomCount: 7,
         designNumber: 2,
@@ -2156,9 +2184,19 @@
         document.documentElement.classList.toggle("low-power", lowPowerMode);
       }
 
+      function detectFillScreenMode() {
+        const params = new URLSearchParams(window.location.search);
+        const fit = (params.get("ajuste") || params.get("fit") || "").toLowerCase();
+        if (["caber", "contain", "inteiro"].includes(fit)) return false;
+        if (["preencher", "cover", "cheio", "full"].includes(fit)) return true;
+        return lowPowerMode;
+      }
+
       function fitBoard() {
         const viewport = window.visualViewport || window;
-        const scale = Math.min(viewport.width / artWidth, viewport.height / artHeight);
+        const scaleToFit = Math.min(viewport.width / artWidth, viewport.height / artHeight);
+        const scaleToFill = Math.max(viewport.width / artWidth, viewport.height / artHeight);
+        const scale = fillScreenMode ? scaleToFill : scaleToFit;
         document.documentElement.style.setProperty("--art-scale", Math.max(scale, 0.1).toFixed(4));
       }
 
@@ -2275,9 +2313,9 @@
         frame.dataset.photoBright = lowPowerMode ? "0" : config.photoBrightness.active.toString();
         frame.dataset.photoBrightType = config.photoBrightness.type.toString();
         if (lowPowerMode) {
-          setFloatVariables("top", { ...config.topFloat, strength: 0, speed: 0 }, 4, 4.8);
-          setFloatVariables("list", { ...config.listFloat, strength: 0, speed: 0 }, 2, 5.2);
-          setFloatVariables("photo", { ...config.photoFloat, strength: 0, speed: 0 }, 4, 5.2);
+          setFloatVariables("top", { mode: 0, strength: 0.55, speed: 0.55 }, 4, 4.8);
+          setFloatVariables("list", { mode: 0, strength: 0.55, speed: 0.55 }, 2, 5.2);
+          setFloatVariables("photo", { mode: 0, strength: 0.55, speed: 0.55 }, 4, 5.2);
           setBrightnessVariables("top", { ...config.topBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
           setBrightnessVariables("list", { ...config.listBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
           setBrightnessVariables("photo", { ...config.photoBrightness, active: 0, strength: 0, speed: 0 }, 4.8);
