@@ -57,6 +57,8 @@
         --photo-brightness-shadow: 5px;
         --photo-brightness-duration: 4.8s;
         --photo-brightness-play-state: running;
+        --art-scale-x: 1;
+        --art-scale-y: 1;
       }
 
       * {
@@ -80,8 +82,8 @@
       }
 
       .fit-shell {
-        width: calc(var(--art-width) * var(--art-scale));
-        height: calc(var(--art-height) * var(--art-scale));
+        width: calc(var(--art-width) * var(--art-scale-x, var(--art-scale)));
+        height: calc(var(--art-height) * var(--art-scale-y, var(--art-scale)));
         position: relative;
       }
 
@@ -117,7 +119,7 @@
         height: var(--art-height);
         position: absolute;
         inset: 0;
-        transform: scale(var(--art-scale));
+        transform: scale(var(--art-scale-x, var(--art-scale)), var(--art-scale-y, var(--art-scale)));
         transform-origin: 0 0;
         overflow: hidden;
         border: 22px solid transparent;
@@ -1273,8 +1275,30 @@
         border: 0;
       }
 
+      .fps-counter {
+        position: fixed;
+        left: 12px;
+        top: 12px;
+        z-index: 50;
+        display: none;
+        min-width: 94px;
+        padding: 8px 10px;
+        border: 1px solid rgba(248, 248, 242, 0.38);
+        border-radius: 4px;
+        color: #f8f8f2;
+        background: rgba(0, 0, 0, 0.76);
+        font: 700 16px/1.2 Consolas, "Courier New", monospace;
+        text-align: right;
+        white-space: pre;
+        pointer-events: none;
+      }
+
+      .fps-counter.is-visible {
+        display: block;
+      }
+
       html.low-power .frame {
-        transform: scale(var(--art-scale)) translateZ(0);
+        transform: scale(var(--art-scale-x, var(--art-scale)), var(--art-scale-y, var(--art-scale))) translateZ(0);
       }
 
       html.low-power body {
@@ -1306,6 +1330,26 @@
       html.low-power .chalk-text,
       html.low-power .icon-label {
         animation-duration: 6.5s !important;
+      }
+
+      html.low-power .photo-3-rings circle {
+        animation-duration: 4.8s !important;
+        animation-timing-function: steps(12, end) !important;
+      }
+
+      html.low-power .photo-3-confetti rect {
+        animation-duration: 5.6s !important;
+        animation-timing-function: steps(18, end) !important;
+      }
+
+      html.low-power .photo-3-sparkles path,
+      html.low-power .photo-3-sparkles polygon {
+        animation-duration: 3.6s !important;
+        animation-timing-function: steps(10, end) !important;
+      }
+
+      html.low-power .frame[data-photo-design="3"] .photo-image {
+        display: none;
       }
 
       html.low-power .header text,
@@ -1802,6 +1846,7 @@
   </head>
   <body>
     <button class="fullscreen-button" id="fullscreen-button" type="button">Tela cheia</button>
+    <div id="fps-counter" class="fps-counter" aria-hidden="true">FPS --</div>
     <div class="fit-shell">
       <main class="frame" aria-labelledby="page-title">
         <h1 id="page-title" class="sr-only">Quadro de Recordes</h1>
@@ -2144,7 +2189,7 @@
       const photoDuration = 6000;
       const transitionDuration = 1150;
       const lowPowerMode = detectLowPowerMode();
-      const fillScreenMode = detectFillScreenMode();
+      const fitMode = detectFitMode();
       const fallbackConfig = {
         roomCount: 7,
         designNumber: 2,
@@ -2184,20 +2229,27 @@
         document.documentElement.classList.toggle("low-power", lowPowerMode);
       }
 
-      function detectFillScreenMode() {
+      function detectFitMode() {
         const params = new URLSearchParams(window.location.search);
         const fit = (params.get("ajuste") || params.get("fit") || "").toLowerCase();
-        if (["caber", "contain", "inteiro"].includes(fit)) return false;
-        if (["preencher", "cover", "cheio", "full"].includes(fit)) return true;
-        return lowPowerMode;
+        if (["caber", "contain", "inteiro"].includes(fit)) return "contain";
+        if (["proporcional", "cover"].includes(fit)) return "cover";
+        if (["preencher", "cheio", "full", "esticado", "stretch"].includes(fit)) return "stretch";
+        return lowPowerMode ? "stretch" : "contain";
       }
 
       function fitBoard() {
         const viewport = window.visualViewport || window;
         const scaleToFit = Math.min(viewport.width / artWidth, viewport.height / artHeight);
         const scaleToFill = Math.max(viewport.width / artWidth, viewport.height / artHeight);
-        const scale = fillScreenMode ? scaleToFill : scaleToFit;
+        const scaleX = viewport.width / artWidth;
+        const scaleY = viewport.height / artHeight;
+        const scale = fitMode === "cover" ? scaleToFill : scaleToFit;
+        const nextScaleX = fitMode === "stretch" ? scaleX : scale;
+        const nextScaleY = fitMode === "stretch" ? scaleY : scale;
         document.documentElement.style.setProperty("--art-scale", Math.max(scale, 0.1).toFixed(4));
+        document.documentElement.style.setProperty("--art-scale-x", Math.max(nextScaleX, 0.1).toFixed(4));
+        document.documentElement.style.setProperty("--art-scale-y", Math.max(nextScaleY, 0.1).toFixed(4));
       }
 
       function textFrom(node, selector) {
@@ -2539,6 +2591,67 @@
         }, 10000);
       }
 
+      function setupFpsCounter() {
+        const counter = document.querySelector("#fps-counter");
+        if (!counter) return;
+
+        let visible = false;
+        let frameCount = 0;
+        let lastSecond = 0;
+        let lastFrame = 0;
+        let minFps = Infinity;
+        let rafId = 0;
+
+        function renderFps(now) {
+          if (!visible) return;
+          if (!lastSecond) {
+            lastSecond = now;
+            lastFrame = now;
+          }
+
+          frameCount += 1;
+          const delta = now - lastFrame;
+          lastFrame = now;
+          if (delta > 0) {
+            minFps = Math.min(minFps, 1000 / delta);
+          }
+
+          if (now - lastSecond >= 1000) {
+            const fps = Math.round((frameCount * 1000) / (now - lastSecond));
+            const low = Number.isFinite(minFps) ? Math.round(minFps) : fps;
+            counter.textContent = `FPS ${fps}\nMIN ${low}`;
+            frameCount = 0;
+            minFps = Infinity;
+            lastSecond = now;
+          }
+
+          rafId = requestAnimationFrame(renderFps);
+        }
+
+        function setVisible(nextVisible) {
+          visible = nextVisible;
+          counter.classList.toggle("is-visible", visible);
+          if (visible) {
+            frameCount = 0;
+            lastSecond = 0;
+            lastFrame = 0;
+            minFps = Infinity;
+            rafId = requestAnimationFrame(renderFps);
+          } else {
+            cancelAnimationFrame(rafId);
+            counter.textContent = "FPS --";
+          }
+        }
+
+        window.addEventListener("keydown", (event) => {
+          if (event.key.toLowerCase() !== "f" || event.repeat) return;
+          const target = event.target;
+          if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) return;
+          event.preventDefault();
+          setVisible(!visible);
+        });
+      }
+
       function startPhotoCycle(records, roomCount) {
         const frame = document.querySelector(".frame");
         activePhotoRecords = records.filter((record) => isActivePhotoRecord(record, roomCount));
@@ -2570,6 +2683,7 @@
       fitBoard();
       loadRecords();
       setupFullscreenButton();
+      setupFpsCounter();
       window.addEventListener("resize", fitBoard);
       if (window.visualViewport) {
         window.visualViewport.addEventListener("resize", fitBoard);
