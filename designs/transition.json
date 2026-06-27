@@ -1,0 +1,34 @@
+{
+  "schema": "painel-canva/v1",
+  "screen": "transition",
+  "name": "Transição entre telas",
+  "canvas": { "width": 450, "height": 800, "background": "#132019" },
+  "motion": { "kind": "wipe", "durationMs": 1150, "direction": "left-to-right" },
+  "elements": [
+    {
+      "id": "transition-wipe",
+      "type": "rect",
+      "role": "transition-wipe",
+      "left": -90,
+      "top": -80,
+      "width": 630,
+      "height": 960,
+      "rotation": -9,
+      "fill": "#f4e6ad",
+      "opacity": 1
+    },
+    {
+      "id": "transition-label",
+      "type": "text",
+      "left": 65,
+      "top": 350,
+      "width": 320,
+      "height": 90,
+      "text": "NOVO RECORDE",
+      "fontSize": 34,
+      "fontWeight": "bold",
+      "color": "#17231b",
+      "textAlign": "center"
+    }
+  ]
+}

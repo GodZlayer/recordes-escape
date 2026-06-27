@@ -1,0 +1,83 @@
+{
+  "schema": "painel-canva/v1",
+  "screen": "list",
+  "name": "Lista de recordes",
+  "canvas": { "width": 450, "height": 800, "background": "#132019" },
+  "motion": { "kind": "float", "durationMs": 5200, "strength": 1 },
+  "elements": [
+    {
+      "id": "list-title",
+      "type": "text",
+      "left": 35,
+      "top": 35,
+      "width": 380,
+      "height": 70,
+      "text": "QUADRO DE RECORDES",
+      "fontSize": 31,
+      "fontWeight": "bold",
+      "color": "#f7f0d0",
+      "textAlign": "center"
+    },
+    {
+      "id": "record-row",
+      "type": "group",
+      "role": "record-template",
+      "left": 20,
+      "top": 145,
+      "width": 410,
+      "height": 76,
+      "repeat": { "source": "records", "max": 7, "gap": 12 },
+      "children": [
+        {
+          "id": "row-background",
+          "type": "rect",
+          "left": 0,
+          "top": 0,
+          "width": 410,
+          "height": 76,
+          "fill": "#f1df9b",
+          "opacity": 0.94
+        },
+        {
+          "id": "row-room",
+          "type": "text",
+          "left": 18,
+          "top": 12,
+          "width": 112,
+          "height": 48,
+          "text": "{{room}}",
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "color": "#1a211d",
+          "textAlign": "start"
+        },
+        {
+          "id": "row-team",
+          "type": "text",
+          "left": 138,
+          "top": 12,
+          "width": 176,
+          "height": 48,
+          "text": "{{team}}",
+          "fontSize": 18,
+          "fontWeight": "normal",
+          "color": "#1a211d",
+          "textAlign": "start"
+        },
+        {
+          "id": "row-time",
+          "type": "text",
+          "left": 320,
+          "top": 12,
+          "width": 76,
+          "height": 48,
+          "text": "{{time}}",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "color": "#1a211d",
+          "textAlign": "end"
+        }
+      ]
+    }
+  ]
+}

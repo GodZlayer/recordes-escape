@@ -1260,7 +1260,49 @@
       }
 
       .frame.is-wiping .screen-wipe {
-        animation: board-wipe 1.15s ease-in-out;
+        animation: board-wipe var(--canva-transition-duration, 1.15s) ease-in-out;
+      }
+
+      .canva-design-layer {
+        position: absolute;
+        inset: 0;
+        width: 450px;
+        height: 800px;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .canva-list-layer {
+        z-index: 2;
+        transition:
+          opacity 0.55s ease,
+          transform 0.65s ease;
+      }
+
+      .frame.canva-list-active #top-design,
+      .frame.canva-list-active #entries {
+        visibility: hidden;
+      }
+
+      .frame.show-photo .canva-list-layer {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+
+      .canva-native-group {
+        transform-origin: center;
+      }
+
+      .canva-native-text {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        line-height: 1.05;
+        white-space: pre-wrap;
+      }
+
+      .canva-groups-layer {
+        z-index: 1;
       }
 
       .sr-only {
@@ -2223,6 +2265,7 @@
       </article>
     </template>
 
+    <script src="scripts/design-runtime.js"></script>
     <script>
       const artWidth = 450;
       const artHeight = 800;
@@ -2578,6 +2621,7 @@
         applyTextFit(room, record.room, roomSize);
         applyTextFit(team, record.team, teamSize);
         applyTextFit(time, record.time, timeSize);
+        window.CanvaDesignRuntime?.renderGroups(record);
       }
 
       function runWipe() {
@@ -2728,9 +2772,11 @@
           const records = recordsFromXml(xml);
           const sourceRecords = records.length ? records : fallbackRecords;
           renderRecords(sourceRecords, config.roomCount);
+          await window.CanvaDesignRuntime?.load(sourceRecords, config.roomCount);
           startPhotoCycle(sourceRecords, config.roomCount);
         } catch (error) {
           renderRecords(fallbackRecords, config.roomCount);
+          await window.CanvaDesignRuntime?.load(fallbackRecords, config.roomCount);
           startPhotoCycle(fallbackRecords, config.roomCount);
         }
       }

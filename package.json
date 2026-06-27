@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "description": "Painel visual de recordes com geracao de video e conversao de logos.",
+  "scripts": {
+    "canva:bridge": "node scripts/canva-bridge.mjs",
+    "canva:app": "npm --prefix canva-app run dev",
+    "canva:check": "npm --prefix canva-app run check",
+    "canva:validate": "node scripts/validate-canva-designs.mjs"
+  },
   "dependencies": {
     "playwright-core": "1.49.1",
     "potrace": "2.1.8"

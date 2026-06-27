@@ -1,0 +1,85 @@
+{
+  "schema": "painel-canva/v1",
+  "screen": "groups",
+  "name": "Grupos / photo-design",
+  "canvas": { "width": 450, "height": 800, "background": "#1b241f" },
+  "motion": { "kind": "photo-overlay", "durationMs": 6000, "zoom": 1.06 },
+  "elements": [
+    {
+      "id": "photo-placeholder",
+      "type": "rect",
+      "role": "photo-placeholder",
+      "left": 0,
+      "top": 0,
+      "width": 450,
+      "height": 800,
+      "fill": "#33463b",
+      "opacity": 1
+    },
+    {
+      "id": "photo-shade",
+      "type": "rect",
+      "left": 0,
+      "top": 510,
+      "width": 450,
+      "height": 290,
+      "fill": "#101713",
+      "opacity": 0.82
+    },
+    {
+      "id": "photo-title",
+      "type": "text",
+      "left": 35,
+      "top": 535,
+      "width": 380,
+      "height": 50,
+      "text": "RECORDE ATUAL",
+      "fontSize": 25,
+      "fontWeight": "bold",
+      "color": "#f6e9b9",
+      "textAlign": "center"
+    },
+    {
+      "id": "photo-room",
+      "type": "text",
+      "role": "room",
+      "left": 35,
+      "top": 600,
+      "width": 380,
+      "height": 48,
+      "text": "{{room}}",
+      "fontSize": 26,
+      "fontWeight": "bold",
+      "color": "#ffffff",
+      "textAlign": "center"
+    },
+    {
+      "id": "photo-team",
+      "type": "text",
+      "role": "team",
+      "left": 35,
+      "top": 660,
+      "width": 380,
+      "height": 42,
+      "text": "{{team}}",
+      "fontSize": 20,
+      "fontWeight": "normal",
+      "color": "#ffffff",
+      "textAlign": "center"
+    },
+    {
+      "id": "photo-time",
+      "type": "text",
+      "role": "time",
+      "left": 35,
+      "top": 715,
+      "width": 380,
+      "height": 48,
+      "text": "{{time}}",
+      "fontSize": 26,
+      "fontWeight": "bold",
+      "color": "#f6e9b9",
+      "textAlign": "center"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #17231b;
+  background: #ffffff;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.panel {
+  display: grid;
+  gap: 16px;
+  padding: 20px 16px;
+}
+
+header {
+  display: grid;
+  gap: 5px;
+}
+
+.eyebrow {
+  color: #5c6b62;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+p {
+  margin: 0;
+  color: #536159;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #cad2cd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17231b;
+  font: inherit;
+}
+
+input,
+select {
+  padding: 0 10px;
+}
+
+button {
+  cursor: pointer;
+  font-weight: 750;
+}
+
+button.primary {
+  border-color: #166b45;
+  background: #166b45;
+  color: #ffffff;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+}
+
+.status,
+aside {
+  border-radius: 9px;
+  padding: 12px;
+  background: #f2f6f3;
+  color: #34433a;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+aside {
+  display: grid;
+  gap: 5px;
+}
+
+code {
+  border-radius: 4px;
+  background: #e3ebe6;
+  padding: 1px 4px;
+}

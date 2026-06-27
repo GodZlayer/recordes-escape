@@ -1,0 +1,28 @@
+{
+  "name": "painel-recordes-canva-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "webpack serve --config webpack.config.cjs --mode development",
+    "build": "tsc --noEmit && webpack --config webpack.config.cjs --mode production",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@canva/design": "^2.9.0",
+    "@canva/intents": "^2.6.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.2",
+    "webpack": "^5.105.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.5"
+  }
+}
