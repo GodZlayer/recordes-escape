@@ -1,0 +1,10 @@
+{
+  "name": "painel-de-recordes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Painel visual de recordes com geracao de video e conversao de logos.",
+  "dependencies": {
+    "playwright-core": "1.49.1",
+    "potrace": "2.1.8"
+  }
+}

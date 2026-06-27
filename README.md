@@ -305,17 +305,20 @@ O arquivo `painel.bat` e o ponto de entrada para usuarios no Windows.
 Fluxo:
 
 1. Entra na pasta do projeto com `cd /d "%~dp0"`.
-2. Verifica se `node` existe no PATH.
-3. Verifica se `ffmpeg` existe no PATH.
-4. Se `node_modules/playwright-core/package.json` nao existir, instala `playwright-core@1.49.1`.
-5. Executa:
+2. Procura o Node.js 18 ou superior; se estiver fora do `PATH`, corrige o `PATH` do usuario; se estiver ausente, tenta instalar `OpenJS.NodeJS.LTS` pelo `winget`.
+3. Verifica o npm e tenta reparar a instalacao do Node.js pelo `winget` se ele estiver ausente.
+4. Procura o FFmpeg; se estiver fora do `PATH`, corrige o `PATH` do usuario; se estiver ausente, tenta instalar `Gyan.FFmpeg` pelo `winget`.
+5. Procura Chrome ou Edge pelo `CHROME_PATH` e nas pastas comuns do Windows.
+6. Usa o Node.js para conferir se `playwright-core` e `potrace` existem e correspondem exatamente as versoes declaradas em `package.json`.
+7. Executa `npm install` somente quando as dependencias estiverem ausentes ou em versoes incorretas.
+8. Executa:
 
 ```bat
 node "%~dp0scripts\video-manager.mjs"
 ```
 
-6. Se o gerenciador terminar com erro, mostra mensagem e pausa.
-7. Se terminar normal, mostra `Gerenciador encerrado.` e pausa.
+9. Se o gerenciador terminar com erro, mostra mensagem e pausa.
+10. Se terminar normal, mostra `Gerenciador encerrado.` e pausa.
 
 ## Menu do gerenciador
 
@@ -504,7 +507,7 @@ Necessario no Windows:
 - FFmpeg no PATH.
 - Google Chrome ou Microsoft Edge instalado.
 - `playwright-core`, instalado automaticamente pelo `painel.bat` se estiver faltando.
-- `potrace` em `node_modules` para converter logos PNG em SVG.
+- `potrace`, instalado automaticamente pelo `painel.bat` para converter logos PNG em SVG.
 
 Se o gerador nao encontrar Chrome/Edge, defina `CHROME_PATH` apontando para o executavel do navegador.
 
