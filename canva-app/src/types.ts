@@ -56,6 +56,7 @@ export type DesignNode = RectNode | TextNode | ShapeNode | GroupNode;
 export type DesignDocument = {
   schema: "painel-canva/v1";
   screen: ScreenType;
+  variant?: string;
   name: string;
   canvas: { width: 450; height: 800; background: string };
   motion?: Record<string, unknown>;

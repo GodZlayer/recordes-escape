@@ -1,6 +1,7 @@
 {
   "schema": "painel-canva/v1",
   "screen": "groups",
+  "variant": "photo-3",
   "name": "Grupos real — photo-design 3",
   "canvas": { "width": 450, "height": 800, "background": "#d8a566" },
   "motion": { "kind": "photo-overlay", "durationMs": 6000, "sourceDesign": "photo-design-3.html" },

@@ -1,6 +1,7 @@
 {
   "schema": "painel-canva/v1",
   "screen": "transition",
+  "variant": "transition-1",
   "name": "Transição real — board wipe",
   "canvas": { "width": 450, "height": 800, "background": "#d8a566" },
   "motion": { "kind": "wipe", "durationMs": 1150, "direction": "left-to-right", "sourceDesign": "index.html:.screen-wipe" },

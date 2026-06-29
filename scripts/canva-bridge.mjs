@@ -1,10 +1,11 @@
 import { createServer } from "node:http";
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, unlink, writeFile } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const designsDirectory = join(root, "designs");
+const libraryDirectory = join(designsDirectory, "library");
 const port = Number(process.env.CANVA_BRIDGE_PORT || 3210);
 const host = process.env.CANVA_BRIDGE_HOST || "127.0.0.1";
 const aliases = new Map([
@@ -32,6 +33,86 @@ function designName(rawName = "") {
   const normalizedName = String(rawName).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const name = aliases.get(normalizedName) || normalizedName;
   return validDesigns.has(name) ? name : null;
+}
+
+function designId(rawId = "default") {
+  const value = String(rawId)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return value || "default";
+}
+
+function pathFor(screen, id = "default") {
+  return id === "default"
+    ? join(designsDirectory, `${screen}.json`)
+    : join(libraryDirectory, screen, `${id}.json`);
+}
+
+async function readDesign(screen, id = "default") {
+  const document = JSON.parse(await readFile(pathFor(screen, designId(id)), "utf8"));
+  if (document.extends) {
+    const base = await readDesign(screen, document.extends);
+    const { extends: _extends, ...overlay } = document;
+    return { ...base, ...overlay };
+  }
+  return document;
+}
+
+async function listDesigns(screen) {
+  const entries = [];
+  const base = await readDesign(screen);
+  entries.push({
+    id: "default",
+    name: base.name || "Design principal",
+    screen,
+    variant: base.variant,
+    updatedAt: base.updatedAt,
+    isDefault: true,
+  });
+  const directory = join(libraryDirectory, screen);
+  try {
+    for (const file of await readdir(directory)) {
+      if (!file.endsWith(".json")) continue;
+      const id = file.slice(0, -5);
+      const document = await readDesign(screen, id);
+      entries.push({
+        id,
+        name: document.name || id,
+        screen,
+        variant: document.variant,
+        updatedAt: document.updatedAt,
+        isDefault: false,
+      });
+    }
+  } catch {
+    // A pasta nasce quando a primeira variação é criada.
+  }
+  return entries.sort((a, b) =>
+    String(a.variant || a.name).localeCompare(
+      String(b.variant || b.name),
+      "pt-BR",
+      { numeric: true },
+    ),
+  );
+}
+
+async function createDesign(screen, payload) {
+  const name = String(payload?.name || "").trim();
+  if (!name) throw new Error("Informe um nome para o novo design.");
+  const source = await readDesign(screen, payload?.sourceId || "default");
+  const baseId = designId(name) === "default" ? "design" : designId(name);
+  let id = baseId;
+  let suffix = 2;
+  const existing = new Set((await listDesigns(screen)).map((item) => item.id));
+  while (existing.has(id)) id = `${baseId}-${suffix++}`;
+  const document = validateDesign({ ...source, name }, screen);
+  const directory = join(libraryDirectory, screen);
+  await mkdir(directory, { recursive: true });
+  await writeFile(pathFor(screen, id), `${JSON.stringify(document, null, 2)}\n`, "utf8");
+  return { id, document };
 }
 
 async function bodyFrom(request) {
@@ -106,17 +187,42 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  const libraryMatch = url.pathname.match(/^\/api\/designs\/([^/]+)\/library$/);
+  const deleteMatch = url.pathname.match(/^\/api\/designs\/([^/]+)\/([^/]+)$/);
   const match = url.pathname.match(/^\/api\/designs\/([^/]+)$/);
-  const name = match && designName(match[1]);
+  const name = designName((libraryMatch || deleteMatch || match)?.[1]);
   if (!name) {
     json(response, 404, { error: "Use list, transition ou groups." });
     return;
   }
 
-  const path = join(designsDirectory, `${name}.json`);
   try {
+    if (libraryMatch && request.method === "GET") {
+      json(response, 200, { designs: await listDesigns(name) });
+      return;
+    }
+    if (libraryMatch && request.method === "POST") {
+      const created = await createDesign(name, await bodyFrom(request));
+      json(response, 201, {
+        id: created.id,
+        name: created.document.name,
+        screen: name,
+        updatedAt: created.document.updatedAt,
+      });
+      return;
+    }
+    if (deleteMatch && request.method === "DELETE") {
+      const id = designId(deleteMatch[2]);
+      if (id === "default") throw new Error("O design principal não pode ser excluído.");
+      await unlink(pathFor(name, id));
+      json(response, 200, { ok: true, id, screen: name });
+      return;
+    }
+
+    const id = designId(url.searchParams.get("id") || "default");
+    const path = pathFor(name, id);
     if (request.method === "GET") {
-      json(response, 200, JSON.parse(await readFile(path, "utf8")));
+      json(response, 200, await readDesign(name, id));
       return;
     }
     if (request.method === "POST") {

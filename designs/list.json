@@ -1,6 +1,7 @@
 {
   "schema": "painel-canva/v1",
   "screen": "list",
+  "variant": "list-2",
   "name": "Lista real — design 2",
   "canvas": { "width": 450, "height": 800, "background": "#d8a566" },
   "motion": { "kind": "float", "durationMs": 5200, "strength": 1, "sourceDesign": "design-2.html" },

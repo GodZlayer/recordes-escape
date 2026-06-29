@@ -88,6 +88,32 @@ button:disabled {
   gap: 8px;
 }
 
+.library {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #dce3df;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f8faf9;
+}
+
+.create-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  gap: 7px;
+}
+
+.library-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+button.danger {
+  border-color: #d9aaa7;
+  color: #9b2721;
+}
+
 .status,
 aside {
   border-radius: 9px;
@@ -96,6 +122,11 @@ aside {
   color: #34433a;
   font-size: 13px;
   line-height: 1.45;
+}
+
+.status.error {
+  background: #fff0ef;
+  color: #8b241f;
 }
 
 aside {

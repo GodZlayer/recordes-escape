@@ -1,0 +1,26 @@
+{
+  "schema": "painel-canva/v1",
+  "extends": "default",
+  "screen": "groups",
+  "variant": "photo-2",
+  "name": "Photo-design 2",
+  "elements": [
+    { "id": "wood-left", "type": "rect", "left": 0, "top": 0, "width": 22, "height": 800, "fill": "#c99152" },
+    { "id": "wood-right", "type": "rect", "left": 428, "top": 0, "width": 22, "height": 800, "fill": "#e0b06d" },
+    { "id": "wood-top", "type": "rect", "left": 22, "top": 0, "width": 406, "height": 22, "fill": "#e5bb79" },
+    { "id": "wood-bottom", "type": "rect", "left": 22, "top": 778, "width": 406, "height": 22, "fill": "#b97c43" },
+    { "id": "photo-placeholder", "type": "rect", "role": "photo-placeholder", "left": 22, "top": 22, "width": 406, "height": 756, "fill": "#111416" },
+    { "id": "photo2-room-strip", "type": "rect", "left": 44, "top": 570, "width": 362, "height": 54, "fill": "#0a0a0a", "opacity": 0.84 },
+    { "id": "photo2-room-top", "type": "rect", "left": 44, "top": 570, "width": 362, "height": 2, "fill": "#f8f8f2", "opacity": 0.78 },
+    { "id": "photo2-room-bottom", "type": "rect", "left": 44, "top": 622, "width": 362, "height": 2, "fill": "#f8f8f2", "opacity": 0.72 },
+    { "id": "photo2-room", "type": "text", "role": "room", "left": 58, "top": 577, "width": 334, "height": 42, "text": "{{room}}", "color": "#f8f8f2", "fontSize": 36, "fontFamily": "Caveat Brush", "textAlign": "center" },
+    { "id": "photo2-logo-frame", "type": "rect", "role": "logo-placeholder", "left": 44, "top": 632, "width": 112, "height": 118, "fill": "#080808", "opacity": 0.72 },
+    { "id": "photo2-logo-left", "type": "rect", "left": 44, "top": 632, "width": 2, "height": 118, "fill": "#f8f8f2", "opacity": 0.58 },
+    { "id": "photo2-logo-right", "type": "rect", "left": 154, "top": 632, "width": 2, "height": 118, "fill": "#f8f8f2", "opacity": 0.58 },
+    { "id": "photo2-record", "type": "rect", "left": 166, "top": 632, "width": 240, "height": 118, "fill": "#080808", "opacity": 0.82 },
+    { "id": "photo2-record-left", "type": "rect", "left": 166, "top": 632, "width": 3, "height": 118, "fill": "#f8f8f2", "opacity": 0.66 },
+    { "id": "photo2-record-right", "type": "rect", "left": 403, "top": 632, "width": 3, "height": 118, "fill": "#f8f8f2", "opacity": 0.66 },
+    { "id": "photo2-team", "type": "text", "role": "team", "left": 182, "top": 650, "width": 208, "height": 38, "text": "{{team}}", "color": "#f8f8f2", "fontSize": 30, "fontFamily": "Caveat Brush", "textAlign": "center" },
+    { "id": "photo2-time", "type": "text", "role": "time", "left": 182, "top": 698, "width": 208, "height": 42, "text": "{{time}}", "color": "#f8f8f2", "fontSize": 36, "fontWeight": "bold", "fontFamily": "Kalam", "textAlign": "center" }
+  ]
+}

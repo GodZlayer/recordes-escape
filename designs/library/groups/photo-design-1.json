@@ -1,0 +1,24 @@
+{
+  "schema": "painel-canva/v1",
+  "extends": "default",
+  "screen": "groups",
+  "variant": "photo-1",
+  "name": "Photo-design 1",
+  "elements": [
+    { "id": "wood-left", "type": "rect", "left": 0, "top": 0, "width": 22, "height": 800, "fill": "#c99152" },
+    { "id": "wood-right", "type": "rect", "left": 428, "top": 0, "width": 22, "height": 800, "fill": "#e0b06d" },
+    { "id": "wood-top", "type": "rect", "left": 22, "top": 0, "width": 406, "height": 22, "fill": "#e5bb79" },
+    { "id": "wood-bottom", "type": "rect", "left": 22, "top": 778, "width": 406, "height": 22, "fill": "#b97c43" },
+    { "id": "photo-placeholder", "type": "rect", "role": "photo-placeholder", "left": 22, "top": 22, "width": 406, "height": 756, "fill": "#111416" },
+    { "id": "photo1-title", "type": "text", "left": 46, "top": 66, "width": 358, "height": 64, "text": "RECORDE ATUAL", "color": "#f8f8f2", "fontSize": 64, "fontWeight": "bold", "fontFamily": "Amatic SC", "textAlign": "center" },
+    { "id": "photo1-room-icon", "type": "text", "left": 50, "top": 594, "width": 34, "height": 34, "text": "▣", "color": "#f8f8f2", "fontSize": 26, "textAlign": "center" },
+    { "id": "photo1-room-tape", "type": "rect", "left": 92, "top": 588, "width": 308, "height": 44, "fill": "#111519", "opacity": 0.94 },
+    { "id": "photo1-room", "type": "text", "role": "room", "left": 104, "top": 591, "width": 284, "height": 38, "text": "{{room}}", "color": "#f8f8f2", "fontSize": 36, "fontFamily": "Caveat Brush", "textAlign": "center" },
+    { "id": "photo1-team-icon", "type": "text", "left": 50, "top": 647, "width": 34, "height": 34, "text": "♟", "color": "#f8f8f2", "fontSize": 25, "textAlign": "center" },
+    { "id": "photo1-team-tape", "type": "rect", "left": 92, "top": 641, "width": 308, "height": 44, "fill": "#111519", "opacity": 0.94 },
+    { "id": "photo1-team", "type": "text", "role": "team", "left": 104, "top": 646, "width": 284, "height": 34, "text": "{{team}}", "color": "#f8f8f2", "fontSize": 28, "fontFamily": "Kalam", "textAlign": "center" },
+    { "id": "photo1-time-icon", "type": "text", "left": 50, "top": 700, "width": 34, "height": 34, "text": "◷", "color": "#f8f8f2", "fontSize": 26, "textAlign": "center" },
+    { "id": "photo1-time-tape", "type": "rect", "left": 92, "top": 694, "width": 308, "height": 44, "fill": "#111519", "opacity": 0.94 },
+    { "id": "photo1-time", "type": "text", "role": "time", "left": 104, "top": 697, "width": 284, "height": 38, "text": "{{time}}", "color": "#f8f8f2", "fontSize": 34, "fontWeight": "bold", "fontFamily": "Kalam", "textAlign": "center" }
+  ]
+}

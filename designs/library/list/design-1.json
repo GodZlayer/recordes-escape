@@ -1,0 +1,7 @@
+{
+  "schema": "painel-canva/v1",
+  "extends": "default",
+  "screen": "list",
+  "variant": "list-1",
+  "name": "Lista — design 1"
+}
