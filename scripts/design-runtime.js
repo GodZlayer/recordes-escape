@@ -34,6 +34,20 @@
     if (element.role === "photo-placeholder" && options.skipPhotoPlaceholder) {
       return null;
     }
+    if (element.role === "logo-label" && options.logoSrc) {
+      return null;
+    }
+    if (element.role === "logo-placeholder" && options.logoSrc) {
+      const logo = document.createElement("img");
+      logo.className = "canva-native-logo";
+      logo.src = options.logoSrc;
+      logo.alt = `Logo da sala ${data.room || ""}`;
+      applyStyle(logo, {
+        ...baseStyle(element),
+        objectFit: "contain",
+      });
+      return logo;
+    }
 
     if (element.type === "group") {
       const group = document.createElement("div");
@@ -73,14 +87,26 @@
       const viewBox = element.viewBox || { left: 0, top: 0, width: element.width, height: element.height };
       svg.setAttribute("viewBox", `${viewBox.left} ${viewBox.top} ${viewBox.width} ${viewBox.height}`);
       applyStyle(svg, baseStyle(element));
-      const path = document.createElementNS(namespace, "path");
-      path.setAttribute("d", element.path || "");
-      path.setAttribute("fill", element.fill || "none");
-      if (element.stroke) {
-        path.setAttribute("stroke", element.stroke);
-        path.setAttribute("stroke-width", element.strokeWeight || 1);
-      }
-      svg.appendChild(path);
+      const paths = element.paths || [
+        {
+          path: element.path || "",
+          fill: element.fill,
+          stroke: element.stroke,
+          strokeWeight: element.strokeWeight,
+        },
+      ];
+      paths.forEach((definition) => {
+        const path = document.createElementNS(namespace, "path");
+        path.setAttribute("d", definition.path || "");
+        path.setAttribute("fill", definition.fill || "none");
+        if (definition.stroke) {
+          path.setAttribute("stroke", definition.stroke);
+          path.setAttribute("stroke-width", definition.strokeWeight || 1);
+          path.setAttribute("stroke-linecap", "round");
+          path.setAttribute("stroke-linejoin", "round");
+        }
+        svg.appendChild(path);
+      });
       return svg;
     }
 
@@ -130,8 +156,9 @@
     const container = document.querySelector("#photo-design");
     if (!design || !container) return;
     const root = layer("canva-groups-layer", "transparent");
+    const logoSrc = record.id ? `salaslogos/${record.id}.svg` : "";
     design.elements.forEach((element) => {
-      const node = renderElement(element, record, { skipPhotoPlaceholder: true });
+      const node = renderElement(element, record, { skipPhotoPlaceholder: true, logoSrc });
       if (node) root.appendChild(node);
     });
     container.replaceChildren(root);

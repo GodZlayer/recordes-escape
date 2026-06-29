@@ -1,81 +1,193 @@
 {
   "schema": "painel-canva/v1",
   "screen": "list",
-  "name": "Lista de recordes",
-  "canvas": { "width": 450, "height": 800, "background": "#132019" },
-  "motion": { "kind": "float", "durationMs": 5200, "strength": 1 },
+  "name": "Lista real — design 2",
+  "canvas": { "width": 450, "height": 800, "background": "#d8a566" },
+  "motion": { "kind": "float", "durationMs": 5200, "strength": 1, "sourceDesign": "design-2.html" },
+  "preview": {
+    "records": [
+      { "room": "Emboscada", "team": "Vigil-Antes", "time": "32:43" },
+      { "room": "Cavaleiro das trevas", "team": "The Batmans", "time": "37:15" },
+      { "room": "Mundo Invertido", "team": "Kuro-obi-pe", "time": "27:26" },
+      { "room": "A Maldição Pirata", "team": "Normal com Bacon", "time": "42:26" },
+      { "room": "T-Vírus", "team": "Só Dami", "time": "39:29" },
+      { "room": "Wandinha", "team": "Tramuz B12", "time": "35:19" },
+      { "room": "Excalibur", "team": "Classic-Imbatíveis", "time": "40:27" }
+    ]
+  },
   "elements": [
+    { "id": "wood-left", "type": "rect", "left": 0, "top": 0, "width": 22, "height": 800, "fill": "#c99152" },
+    { "id": "wood-right", "type": "rect", "left": 428, "top": 0, "width": 22, "height": 800, "fill": "#e0b06d" },
+    { "id": "wood-top", "type": "rect", "left": 22, "top": 0, "width": 406, "height": 22, "fill": "#e5bb79" },
+    { "id": "wood-bottom", "type": "rect", "left": 22, "top": 778, "width": 406, "height": 22, "fill": "#b97c43" },
+    { "id": "board-shadow", "type": "rect", "left": 20, "top": 20, "width": 410, "height": 760, "fill": "#050607" },
+    { "id": "board", "type": "rect", "left": 23, "top": 23, "width": 404, "height": 754, "fill": "#1b1e21" },
+
     {
-      "id": "list-title",
+      "id": "title",
       "type": "text",
       "left": 35,
-      "top": 35,
+      "top": 54,
       "width": 380,
-      "height": 70,
+      "height": 42,
       "text": "QUADRO DE RECORDES",
-      "fontSize": 31,
+      "fontFamily": "Amatic SC",
+      "fontSize": 25,
       "fontWeight": "bold",
-      "color": "#f7f0d0",
+      "color": "#f8f8f2",
       "textAlign": "center"
+    },
+    {
+      "id": "trophy",
+      "type": "shape",
+      "left": 171,
+      "top": 101,
+      "width": 108,
+      "height": 101,
+      "viewBox": { "left": 140, "top": 50, "width": 82, "height": 80 },
+      "paths": [
+        { "path": "M163 57h36v23c0 11-8 19-18 19s-18-8-18-19z", "stroke": "#f8f8f2", "strokeWeight": 4.2 },
+        { "path": "M168 99h26 M175 99v14 M187 99v14 M171 113h20l3 9h-26z M166 122h30", "stroke": "#f8f8f2", "strokeWeight": 4.2 },
+        { "path": "M163 64h-17c0 17 7 27 20 28 M199 64h17c0 17-7 27-20 28 M151 70c1 8 5 13 13 15 M211 70c-1 8-5 13-13 15", "stroke": "#f8f8f2", "strokeWeight": 4.2 },
+        { "path": "M181 66L185 74L194 75L187 81L189 90L181 85L173 90L175 81L168 75L177 74Z", "fill": "#f8f8f2" }
+      ]
+    },
+    {
+      "id": "lock-left",
+      "type": "shape",
+      "left": 79,
+      "top": 132,
+      "width": 92,
+      "height": 92,
+      "rotation": -45,
+      "viewBox": { "left": -45, "top": -45, "width": 90, "height": 90 },
+      "paths": [
+        { "path": "M-20-11c0-12 9-22 21-22s21 10 21 22 M-10-11c0-7 4-12 11-12s11 5 11 12", "stroke": "#f8f8f2", "strokeWeight": 3.8 },
+        { "path": "M-16-11H18V16H-16Z M0-1V8 M-27-24L-33-30 M-20-32L-22-40 M-33-17L-41-19", "stroke": "#f8f8f2", "strokeWeight": 3.8 }
+      ]
+    },
+    {
+      "id": "lock-right",
+      "type": "shape",
+      "left": 279,
+      "top": 132,
+      "width": 92,
+      "height": 92,
+      "rotation": 45,
+      "viewBox": { "left": -45, "top": -45, "width": 90, "height": 90 },
+      "paths": [
+        { "path": "M-20-11c0-12 9-22 21-22s21 10 21 22 M-10-11c0-7 4-12 11-12s11 5 11 12", "stroke": "#f8f8f2", "strokeWeight": 3.8 },
+        { "path": "M-16-11H18V16H-16Z M0-1V8 M27-24L33-30 M20-32L22-40 M33-17L41-19", "stroke": "#f8f8f2", "strokeWeight": 3.8 }
+      ]
+    },
+    {
+      "id": "header-stars",
+      "type": "shape",
+      "left": 49,
+      "top": 145,
+      "width": 352,
+      "height": 80,
+      "viewBox": { "left": 20, "top": 75, "width": 322, "height": 62 },
+      "paths": [
+        { "path": "M55 81L59 88L67 89L61 94L62 102L55 98L48 102L49 94L43 89L51 88Z", "fill": "#f8f8f2" },
+        { "path": "M39 109L43 116L51 117L45 122L46 130L39 126L32 130L33 122L27 117L35 116Z", "fill": "#f8f8f2" },
+        { "path": "M307 81L311 88L319 89L313 94L314 102L307 98L300 102L301 94L295 89L303 88Z", "fill": "#f8f8f2" },
+        { "path": "M323 109L327 116L335 117L329 122L330 130L323 126L316 130L317 122L311 117L319 116Z", "fill": "#f8f8f2" }
+      ]
     },
     {
       "id": "record-row",
       "type": "group",
       "role": "record-template",
-      "left": 20,
-      "top": 145,
-      "width": 410,
-      "height": 76,
-      "repeat": { "source": "records", "max": 7, "gap": 12 },
+      "left": 54,
+      "top": 224,
+      "width": 350,
+      "height": 72,
+      "repeat": { "source": "records", "max": 7, "gap": 3 },
       "children": [
         {
-          "id": "row-background",
-          "type": "rect",
+          "id": "room-icon",
+          "type": "shape",
           "left": 0,
-          "top": 0,
-          "width": 410,
-          "height": 76,
-          "fill": "#f1df9b",
-          "opacity": 0.94
+          "top": 3,
+          "width": 27,
+          "height": 27,
+          "viewBox": { "left": 0, "top": 0, "width": 32, "height": 32 },
+          "paths": [
+            { "path": "M9 28V5H23V28 M13 28V9H23 M18 17H19 M6 28H26", "stroke": "#f8f8f2", "strokeWeight": 2.8 }
+          ]
         },
+        { "id": "room-tape", "type": "rect", "left": 39, "top": 0, "width": 300, "height": 29, "fill": "#101419", "opacity": 0.96 },
         {
-          "id": "row-room",
+          "id": "room-text",
           "type": "text",
-          "left": 18,
-          "top": 12,
-          "width": 112,
-          "height": 48,
+          "role": "room",
+          "left": 49,
+          "top": 1,
+          "width": 280,
+          "height": 27,
           "text": "{{room}}",
-          "fontSize": 20,
-          "fontWeight": "bold",
-          "color": "#1a211d",
-          "textAlign": "start"
-        },
-        {
-          "id": "row-team",
-          "type": "text",
-          "left": 138,
-          "top": 12,
-          "width": 176,
-          "height": 48,
-          "text": "{{team}}",
-          "fontSize": 18,
+          "fontFamily": "Caveat Brush",
+          "fontSize": 21,
           "fontWeight": "normal",
-          "color": "#1a211d",
+          "color": "#f8f8f2",
           "textAlign": "start"
         },
         {
-          "id": "row-time",
+          "id": "team-icon",
+          "type": "shape",
+          "left": 0,
+          "top": 36,
+          "width": 27,
+          "height": 27,
+          "viewBox": { "left": 0, "top": 0, "width": 32, "height": 32 },
+          "paths": [
+            { "path": "M16 6A4 4 0 1 1 16 14A4 4 0 1 1 16 6 M9 27C10 21 12 18 16 18S22 21 23 27 M7.5 11A3 3 0 1 1 7.5 17A3 3 0 1 1 7.5 11 M24.5 11A3 3 0 1 1 24.5 17A3 3 0 1 1 24.5 11 M3 27C3.7 23 5.3 20.5 8 20 M29 27C28.3 23 26.7 20.5 24 20", "stroke": "#f8f8f2", "strokeWeight": 2.8 }
+          ]
+        },
+        { "id": "team-tape", "type": "rect", "left": 39, "top": 33, "width": 195, "height": 29, "fill": "#101419", "opacity": 0.96 },
+        {
+          "id": "team-text",
           "type": "text",
-          "left": 320,
-          "top": 12,
-          "width": 76,
-          "height": 48,
+          "role": "team",
+          "left": 49,
+          "top": 34,
+          "width": 175,
+          "height": 27,
+          "text": "{{team}}",
+          "fontFamily": "Kalam",
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "color": "#f8f8f2",
+          "textAlign": "start"
+        },
+        {
+          "id": "time-icon",
+          "type": "shape",
+          "left": 244,
+          "top": 35,
+          "width": 27,
+          "height": 27,
+          "viewBox": { "left": 0, "top": 0, "width": 32, "height": 32 },
+          "paths": [
+            { "path": "M16 8A10 10 0 1 1 16 28A10 10 0 1 1 16 8 M16 8V4 M12 4H20 M16 18V12 M16 18L21 22", "stroke": "#f8f8f2", "strokeWeight": 2.8 }
+          ]
+        },
+        { "id": "time-tape", "type": "rect", "left": 278, "top": 33, "width": 72, "height": 29, "fill": "#101419", "opacity": 0.96 },
+        {
+          "id": "time-text",
+          "type": "text",
+          "role": "time",
+          "left": 281,
+          "top": 34,
+          "width": 66,
+          "height": 27,
           "text": "{{time}}",
-          "fontSize": 18,
-          "fontWeight": "bold",
-          "color": "#1a211d",
-          "textAlign": "end"
+          "fontFamily": "Kalam",
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "color": "#f8f8f2",
+          "textAlign": "center"
         }
       ]
     }

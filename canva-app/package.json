@@ -9,6 +9,7 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
+    "@canva/asset": "^2.3.0",
     "@canva/design": "^2.9.0",
     "@canva/intents": "^2.6.0",
     "react": "^19.2.3",

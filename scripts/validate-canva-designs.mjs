@@ -19,6 +19,21 @@ function validateNode(node, context) {
   assert(node.width > 0 && node.height > 0, `${context}/${node.id}: tamanho inválido`);
   if (node.type === "text") assert(typeof node.text === "string", `${context}/${node.id}: texto ausente`);
   if (node.type === "rect") assert(/^#[0-9a-f]{6}$/i.test(node.fill), `${context}/${node.id}: cor inválida`);
+  if (node.type === "shape") {
+    const paths = node.paths || [{ path: node.path }];
+    paths.forEach((path, index) => {
+      assert(typeof path.path === "string" && path.path, `${context}/${node.id}: path ${index} ausente`);
+      const normalizedSegments = path.path
+        .split(/(?=[Mm])/)
+        .map((segment) => segment.trim())
+        .filter(Boolean)
+        .map((segment) => (/[Zz]\s*$/.test(segment) ? segment : `${segment} Z`));
+      assert(
+        normalizedSegments.every((segment) => (segment.match(/[Mm]/g) || []).length === 1 && /[Zz]\s*$/.test(segment)),
+        `${context}/${node.id}: path ${index} não pôde ser normalizado para o Canva`,
+      );
+    });
+  }
   if (node.type === "group") {
     assert(Array.isArray(node.children), `${context}/${node.id}: children ausente`);
     node.children.forEach((child, index) => validateNode(child, `${context}/${node.id}[${index}]`));

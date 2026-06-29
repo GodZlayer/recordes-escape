@@ -25,11 +25,20 @@ export type TextNode = BaseNode & {
   fontWeight?: "normal" | "thin" | "extralight" | "light" | "medium" | "semibold" | "bold" | "ultrabold" | "heavy";
   fontStyle?: "normal" | "italic";
   textAlign?: "start" | "center" | "end" | "justify";
+  fontFamily?: string;
+};
+
+export type ShapePath = {
+  path: string;
+  fill?: string;
+  stroke?: string;
+  strokeWeight?: number;
 };
 
 export type ShapeNode = BaseNode & {
   type: "shape";
-  path: string;
+  path?: string;
+  paths?: ShapePath[];
   viewBox: { top: number; left: number; width: number; height: number };
   fill?: string;
   stroke?: string;
@@ -50,6 +59,10 @@ export type DesignDocument = {
   name: string;
   canvas: { width: 450; height: 800; background: string };
   motion?: Record<string, unknown>;
+  preview?: {
+    records?: Array<Record<string, string | number>>;
+    record?: Record<string, string | number>;
+  };
   elements: DesignNode[];
   updatedAt?: string;
 };

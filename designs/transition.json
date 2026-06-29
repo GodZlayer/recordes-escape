@@ -1,34 +1,19 @@
 {
   "schema": "painel-canva/v1",
   "screen": "transition",
-  "name": "Transição entre telas",
-  "canvas": { "width": 450, "height": 800, "background": "#132019" },
-  "motion": { "kind": "wipe", "durationMs": 1150, "direction": "left-to-right" },
+  "name": "Transição real — board wipe",
+  "canvas": { "width": 450, "height": 800, "background": "#d8a566" },
+  "motion": { "kind": "wipe", "durationMs": 1150, "direction": "left-to-right", "sourceDesign": "index.html:.screen-wipe" },
   "elements": [
-    {
-      "id": "transition-wipe",
-      "type": "rect",
-      "role": "transition-wipe",
-      "left": -90,
-      "top": -80,
-      "width": 630,
-      "height": 960,
-      "rotation": -9,
-      "fill": "#f4e6ad",
-      "opacity": 1
-    },
-    {
-      "id": "transition-label",
-      "type": "text",
-      "left": 65,
-      "top": 350,
-      "width": 320,
-      "height": 90,
-      "text": "NOVO RECORDE",
-      "fontSize": 34,
-      "fontWeight": "bold",
-      "color": "#17231b",
-      "textAlign": "center"
-    }
+    { "id": "wood-left", "type": "rect", "left": 0, "top": 0, "width": 22, "height": 800, "fill": "#c99152" },
+    { "id": "wood-right", "type": "rect", "left": 428, "top": 0, "width": 22, "height": 800, "fill": "#e0b06d" },
+    { "id": "wood-top", "type": "rect", "left": 22, "top": 0, "width": 406, "height": 22, "fill": "#e5bb79" },
+    { "id": "wood-bottom", "type": "rect", "left": 22, "top": 778, "width": 406, "height": 22, "fill": "#b97c43" },
+    { "id": "transition-stage", "type": "rect", "left": 20, "top": 20, "width": 410, "height": 760, "fill": "#111416" },
+    { "id": "wipe-soft-left", "type": "rect", "role": "transition-wipe", "left": 74, "top": 22, "width": 76, "height": 756, "fill": "#f8f8f2", "opacity": 0.08 },
+    { "id": "wipe-mid-left", "type": "rect", "left": 150, "top": 22, "width": 70, "height": 756, "fill": "#f8f8f2", "opacity": 0.18 },
+    { "id": "wipe-core", "type": "rect", "left": 220, "top": 22, "width": 54, "height": 756, "fill": "#f8f8f2", "opacity": 0.76 },
+    { "id": "wipe-mid-right", "type": "rect", "left": 274, "top": 22, "width": 70, "height": 756, "fill": "#f8f8f2", "opacity": 0.12 },
+    { "id": "wipe-soft-right", "type": "rect", "left": 344, "top": 22, "width": 50, "height": 756, "fill": "#f8f8f2", "opacity": 0.04 }
   ]
 }

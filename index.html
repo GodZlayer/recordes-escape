@@ -2270,6 +2270,7 @@
       const artWidth = 450;
       const artHeight = 800;
       const maxRooms = 7;
+      const canvaDesignMode = new URLSearchParams(window.location.search).get("canvaDesign") === "1";
       const boardDuration = 11000;
       const photoDuration = 6000;
       const transitionDuration = 1150;
@@ -2621,7 +2622,9 @@
         applyTextFit(room, record.room, roomSize);
         applyTextFit(team, record.team, teamSize);
         applyTextFit(time, record.time, timeSize);
-        window.CanvaDesignRuntime?.renderGroups(record);
+        if (canvaDesignMode) {
+          window.CanvaDesignRuntime?.renderGroups(record);
+        }
       }
 
       function runWipe() {
@@ -2772,11 +2775,15 @@
           const records = recordsFromXml(xml);
           const sourceRecords = records.length ? records : fallbackRecords;
           renderRecords(sourceRecords, config.roomCount);
-          await window.CanvaDesignRuntime?.load(sourceRecords, config.roomCount);
+          if (canvaDesignMode) {
+            await window.CanvaDesignRuntime?.load(sourceRecords, config.roomCount);
+          }
           startPhotoCycle(sourceRecords, config.roomCount);
         } catch (error) {
           renderRecords(fallbackRecords, config.roomCount);
-          await window.CanvaDesignRuntime?.load(fallbackRecords, config.roomCount);
+          if (canvaDesignMode) {
+            await window.CanvaDesignRuntime?.load(fallbackRecords, config.roomCount);
+          }
           startPhotoCycle(fallbackRecords, config.roomCount);
         }
       }
